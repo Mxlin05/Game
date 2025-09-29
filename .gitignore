@@ -1,0 +1,12 @@
+# Build output
+build/
+*.exe
+*.dll
+
+# IDE files
+.vscode/settings.json
+.vscode/launch.json
+
+# Temporary files
+*.tmp
+*.log

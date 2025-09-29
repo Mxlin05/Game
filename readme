@@ -1,1 +1,55 @@
-game made by 2
+# Schmeet - OpenGL Game
+
+A simple OpenGL game project built with C++ and modern graphics libraries.
+
+## Libraries Used
+
+### Core Graphics Libraries
+- **OpenGL** - Graphics rendering API
+- **GLFW 3.4** - Window management and input handling
+- **GLAD** - OpenGL function loader (loads OpenGL functions at runtime)
+
+### System Libraries
+- **OpenGL32** - Windows OpenGL implementation
+- **GDI32** - Graphics Device Interface (Windows)
+- **User32** - Windows user interface functions
+- **Kernel32** - Windows kernel functions
+
+## Project Structure
+
+```
+Game/
+├── build/                    # Build output directory
+│   ├── main.exe             # Compiled executable
+│   └── glfw3.dll            # GLFW runtime library
+├── src/                     # Source code
+│   ├── main.cpp             # Main application code
+│   └── glad.c               # GLAD OpenGL loader
+├── include/                 # Header files
+│   ├── GLFW/                # GLFW headers
+│   └── glad/                # GLAD headers
+├── lib/                     # Library files
+│   └── libglfw3dll.a        # GLFW static library
+├── .vscode/                 # VS Code/Cursor configuration
+│   ├── tasks.json           # Build tasks
+│   ├── launch.json          # Debug configuration
+│   └── c_cpp_properties.json # IntelliSense settings
+└── glfw3.dll                # GLFW runtime library (root)
+```
+
+## Requirements
+
+- **Compiler**: GCC 15.x or newer (MinGW-w64 recommended)
+- **Operating System**: Windows 10/11
+- **Graphics**: OpenGL 3.3 compatible graphics card
+
+## How to Run
+
+1. Open the project in VS Code or Cursor
+2. Press `Ctrl+Shift+B` to build the project
+3. Press `Ctrl+Shift+P` → "Tasks: Run Task" → "Run OpenGL Project"
+
+## Controls
+
+- **ESC** - Close the application (when implemented)
+- **Window Resize** - Automatically adjusts viewport
