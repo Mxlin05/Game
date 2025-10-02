@@ -1,6 +1,6 @@
-# Schmeet - OpenGL Game
+# Schmeet - Custom Game Engine
 
-A simple OpenGL game project built with C++ and modern graphics libraries.
+A custom game engine built with C++ and OpenGL, designed for modern game development with a clean, modular architecture.
 
 ## Libraries Used
 
@@ -15,28 +15,6 @@ A simple OpenGL game project built with C++ and modern graphics libraries.
 - **User32** - Windows user interface functions
 - **Kernel32** - Windows kernel functions
 
-## Project Structure
-
-```
-Game/
-├── build/                    # Build output directory
-│   ├── main.exe             # Compiled executable
-│   └── glfw3.dll            # GLFW runtime library
-├── src/                     # Source code
-│   ├── main.cpp             # Main application code
-│   └── glad.c               # GLAD OpenGL loader
-├── include/                 # Header files
-│   ├── GLFW/                # GLFW headers
-│   └── glad/                # GLAD headers
-├── lib/                     # Library files
-│   └── libglfw3dll.a        # GLFW static library
-├── .vscode/                 # VS Code/Cursor configuration
-│   ├── tasks.json           # Build tasks
-│   ├── launch.json          # Debug configuration
-│   └── c_cpp_properties.json # IntelliSense settings
-└── glfw3.dll                # GLFW runtime library (root)
-```
-
 ## Requirements
 
 - **Compiler**: GCC 15.x or newer (MinGW-w64 recommended)
@@ -49,7 +27,3 @@ Game/
 2. Press `Ctrl+Shift+B` to build the project
 3. Press `Ctrl+Shift+P` → "Tasks: Run Task" → "Run OpenGL Project"
 
-## Controls
-
-- **ESC** - Close the application (when implemented)
-- **Window Resize** - Automatically adjusts viewport
