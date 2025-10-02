@@ -4,6 +4,7 @@
 #include <iostream>     // For console output (cout, endl)
 #include <glad/glad.h>  // OpenGL function loader (loads OpenGL functions at runtime)
 #include <GLFW/glfw3.h> // Window management library (creates windows, handles input)
+#include "input.h"
 
 using namespace std; 
 
@@ -106,6 +107,8 @@ int main()
         // Process all pending events (keyboard, mouse, window events)
         // This keeps the window responsive and updates internal state
         glfwPollEvents();    
+
+        processInputs(window);
     }
 
     // ========================================
