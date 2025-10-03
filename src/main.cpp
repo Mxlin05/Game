@@ -5,6 +5,8 @@
 #include <glad/glad.h>  // OpenGL function loader (loads OpenGL functions at runtime)
 #include <GLFW/glfw3.h> // Window management library (creates windows, handles input)
 #include "input.h"
+#include "shader.h"
+
 
 using namespace std; 
 
@@ -21,6 +23,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     // This ensures graphics are properly scaled when window is resized
     glViewport(0, 0, width, height);
 }
+
 
 int main()
 {

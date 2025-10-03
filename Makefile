@@ -9,7 +9,7 @@ LIBS := -lglfw3dll -lopengl32 -lgdi32 -luser32 -lkernel32
 # Files and directories
 OUTDIR := build
 TARGET := $(OUTDIR)/main.exe
-SOURCES := src/main.cpp src/glad.c
+SOURCES := src/main.cpp src/glad.c src/Input.cpp
 
 .PHONY: all run clean
 
