@@ -6,7 +6,10 @@
 #include <GLFW/glfw3.h> // Window management library (creates windows, handles input)
 #include "input.h"
 #include "shader.h"
-
+#include "VertexBuffer.h"
+#include "IndexBuffer.h"
+#include "VertexArray.h"
+#include "Render.h"
 
 using namespace std; 
 
@@ -109,27 +112,23 @@ int main()
    -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f, // left
     0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 1.0f  // right
 };
-    unsigned int VAO, VBO;
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glBindVertexArray(VAO);
 
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    unsigned int indices[] = { 0, 1, 2 };
+    VertexArray vao;
+
+    VertexBuffer vb(vertices, sizeof(vertices));
+    IndexBuffer ib(indices, 3);
 
     // position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
+    vao.addBuffer(vb, 0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
     // color attribute
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
+    vao.addBuffer(vb, 1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    Render renderer;
     while(!glfwWindowShouldClose(window))
     {
         // Swap the front and back buffers
         // This displays what we've rendered and prepares for the next frame
-        test.use();
-        glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        renderer.Draw(vao, ib, test);
         glfwSwapBuffers(window);
         
         // Process all pending events (keyboard, mouse, window events)
