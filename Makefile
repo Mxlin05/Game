@@ -9,7 +9,16 @@ LIBS := -lglfw3dll -lopengl32 -lgdi32 -luser32 -lkernel32
 # Files and directories
 OUTDIR := build
 TARGET := $(OUTDIR)/main.exe
-SOURCES := src/main.cpp src/glad.c src/Input.cpp src/Shadder.cpp src/VertexBuffer.cpp src/IndexBuffer.cpp src/VertexArray.cpp src/Render.cpp src/Math/Vector2D.cpp
+SOURCES := \
+	src/main.cpp \
+	src/glad.c \
+	src/Input.cpp \
+	src/Shadder.cpp \
+	src/VertexBuffer.cpp \
+	src/IndexBuffer.cpp \
+	src/VertexArray.cpp \
+	src/Render.cpp \
+	src/Math/Vector2D.cpp
 
 .PHONY: all run clean
 
