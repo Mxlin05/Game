@@ -52,3 +52,35 @@ int Texture::getHeight() const {
 unsigned int Texture::getID() const {
     return ID;
 }
+
+TextureAtlas::TextureAtlas(Texture *texture)
+: texture(texture)
+{
+
+};
+
+void TextureAtlas::addRegion(int name, float x, float y, float w, float h, float atlasWidth, float atlasHeight){
+    float u1 = x / atlasWidth;           
+    float u2 = (x + w) / atlasWidth;     
+
+    // Flip V coordinates
+    float v2 = 1.0f - (y / atlasHeight);       
+    float v1 = 1.0f - ((y + h) / atlasHeight);
+
+    texcord region;
+    region.coords[0] = { u1, v1 }; 
+    region.coords[1] = { u2, v1 }; 
+    region.coords[2] = { u2, v2 }; 
+    region.coords[3] = { u1, v2 }; 
+
+    regions[name] = region;
+}
+
+const texcord& TextureAtlas::get(int name) const{
+    auto it = regions.find(name);
+    if(it != regions.end()){
+        return it->second;
+    } else {
+        throw std::runtime_error("Region not found in texture atlas: " + name);
+    }
+}

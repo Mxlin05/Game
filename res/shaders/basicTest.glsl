@@ -18,11 +18,14 @@ void main() {
 #shader fragment
 #version 330 core
 
-in vec2 TexCoord;           // from vertex shader
+in vec2 TexCoord;
+uniform sampler2D uTexture;
+uniform vec2 uOffset;
+uniform vec2 uScale;
+
 out vec4 FragColor;
 
-uniform sampler2D uTexture; // texture bound to slot 0
-
 void main() {
-    FragColor = texture(uTexture, TexCoord);
+    vec2 uv = TexCoord * uScale + uOffset;
+    FragColor = texture(uTexture, uv);
 }
