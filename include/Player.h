@@ -10,6 +10,10 @@ class Player : public GameObject{
         Player(Sprite *sprite, glm::vec2 position, glm::vec2 size, glm::vec2 rotation);
         ~Player();
 
+        //add stats
+
+        //add collisions
+
         void draw(int windowWidth, int windowHeight) const override;
         void update(const glm::vec2 &move, float deltaTime);
 

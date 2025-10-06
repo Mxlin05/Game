@@ -7,7 +7,7 @@
 
 class TileMap{
     public:
-        std::unordered_map<int, Texture*> tileTextures;
+        TextureAtlas *atlas;
         TileMap(const char *filePath);
         ~TileMap();
 
