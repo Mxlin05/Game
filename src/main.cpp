@@ -6,10 +6,13 @@
 #include <GLFW/glfw3.h> // Window management library (creates windows, handles input)
 #include "input.h"
 #include "shader.h"
-#include "VertexBuffer.h"
-#include "IndexBuffer.h"
-#include "VertexArray.h"
 #include "Render.h"
+#include "Texture.h"
+#include "Camera.h"
+#include <glm/gtc/type_ptr.hpp>
+#include "Scene.h"
+#include "TileMap.h"
+#include "Player.h"
 
 using namespace std; 
 
@@ -26,6 +29,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     // This ensures graphics are properly scaled when window is resized
     glViewport(0, 0, width, height);
 }
+
 
 int main()
 {
@@ -92,7 +96,7 @@ int main()
     // Tell OpenGL the size of the rendering area
     // Parameters: x, y, width, height (in pixels)
     // (0,0) is bottom-left corner in OpenGL coordinates
-    glViewport(0, 0, 800, 600);
+    glViewport(0, 0, 2560, 1440);
     
     // Set up callback function for window resize events
     // This ensures the viewport updates when the window is resized
@@ -105,36 +109,57 @@ int main()
     // Keep the window open until the user closes it
     Shader test("res/shaders/basicTest.glsl");
 
-    float vertices[] = {
-    // positions        // colors
-    0.0f,  0.5f, 0.0f,  1.0f, 0.0f, 0.0f, // top
-   -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f, // left
-    0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 1.0f  // right
-};
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    unsigned int indices[] = { 0, 1, 2 };
-    VertexArray vao;
 
-    VertexBuffer vb(vertices, sizeof(vertices));
-    IndexBuffer ib(indices, 3);
-
-    // position attribute
-    vao.addBuffer(vb, 0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-    // color attribute
-    vao.addBuffer(vb, 1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
     Render renderer;
+    Texture texture1("res/textures/lilla_fat_cheeks.png");
+    Texture texture2("res/textures/test1.png");
+
+    Sprite sprite1(&texture1, &test, &renderer);
+    Sprite sprite2(&texture2, &test, &renderer);
+
+    Player player1(&sprite2, glm::vec2(0.0f, 10.0f), glm::vec2(200.0f, 200.0f), glm::vec2(0.0f));
+    GameObject obj2(&sprite1, glm::vec2(100.0f, 100.0f), glm::vec2(200.0f, 200.0f), glm::vec2(0.0f)); 
+    
+
+    TileMap tileMap("res/tilemap.csv");
+    Scene scene(&player1, &tileMap);
+    scene.addObjects(&obj2);
+    
+    int windowWidth, windowHeight;
+    glfwGetWindowSize(window, &windowWidth, &windowHeight);
+    Camera camera(windowWidth, windowHeight);
+    float lastTime = glfwGetTime();
     while(!glfwWindowShouldClose(window))
     {
+        float currentTime = glfwGetTime();
+        float deltaTime = currentTime - lastTime;
         // Swap the front and back buffers
         // This displays what we've rendered and prepares for the next frame
-        renderer.Draw(vao, ib, test);
+        renderer.clear();
+
+        processInputs(window, deltaTime, &player1);
+
+        camera.follow(player1.getPosition(), windowWidth, windowHeight);
+        glm::mat4 view = camera.getViewMatrix();
+        glm::mat4 projection = camera.getProjectionMatrix(windowWidth, windowHeight);
+
+        test.use();
+        test.setUniformMat4f("uView", glm::value_ptr(view));
+        test.setUniformMat4f("uProjection", glm::value_ptr(projection));
+        scene.draw(&renderer, &test, windowWidth, windowHeight);
+        glGetError();
+
+
+
         glfwSwapBuffers(window);
         
         // Process all pending events (keyboard, mouse, window events)
         // This keeps the window responsive and updates internal state
         glfwPollEvents();    
 
-        processInputs(window);
     }
 
     // ========================================
