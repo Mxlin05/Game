@@ -96,7 +96,7 @@ int main()
     // Tell OpenGL the size of the rendering area
     // Parameters: x, y, width, height (in pixels)
     // (0,0) is bottom-left corner in OpenGL coordinates
-    glViewport(0, 0, 2560, 1440);
+    glViewport(0, 0, 800, 600);
     
     // Set up callback function for window resize events
     // This ensures the viewport updates when the window is resized
@@ -120,7 +120,7 @@ int main()
     Sprite sprite1(&texture1, &test, &renderer);
     Sprite sprite2(&texture2, &test, &renderer);
 
-    Player player1(&sprite2, glm::vec2(0.0f, 10.0f), glm::vec2(200.0f, 200.0f), glm::vec2(0.0f));
+    Player player1(&sprite2, glm::vec2(0.0f, 0.0f), glm::vec2(200.0f, 200.0f), glm::vec2(0.0f));
     GameObject obj2(&sprite1, glm::vec2(100.0f, 100.0f), glm::vec2(200.0f, 200.0f), glm::vec2(0.0f)); 
     
 
@@ -147,6 +147,8 @@ int main()
         glm::mat4 projection = camera.getProjectionMatrix(windowWidth, windowHeight);
 
         test.use();
+        // glm::mat4 view = glm::mat4(1.0f);
+        // glm::mat4 projection = glm::ortho(0.0f, (float)windowWidth, (float)windowHeight, 0.0f, -1.0f, 1.0f);
         test.setUniformMat4f("uView", glm::value_ptr(view));
         test.setUniformMat4f("uProjection", glm::value_ptr(projection));
         scene.draw(&renderer, &test, windowWidth, windowHeight);

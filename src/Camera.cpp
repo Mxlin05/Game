@@ -29,6 +29,6 @@ glm::mat4 Camera::getProjectionMatrix(float screenWidth, float screenHeight) con
 
 void Camera::follow(const glm::vec2& target, int windowWidth, int windowHeight) {
     //make sure not go out of bounds
-    position = target - glm::vec2(windowWidth / 2.0f, windowHeight / 2.0f);
+    position = target;
 }
 
