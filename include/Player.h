@@ -4,6 +4,7 @@
 class Player : public GameObject{
     
     public:
+        
         glm::vec2 velocity;
         float speed;
         Player(Sprite *sprite, glm::vec2 position, glm::vec2 size, glm::vec2 rotation);

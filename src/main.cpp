@@ -134,6 +134,9 @@ int main()
     float lastTime = glfwGetTime();
     while(!glfwWindowShouldClose(window))
     {
+        if (player1.checkCollision(obj2)){
+            cout << "Collision detected" << endl;
+        }
         float currentTime = glfwGetTime();
         float deltaTime = currentTime - lastTime;
         // Swap the front and back buffers
@@ -153,11 +156,12 @@ int main()
         test.setUniformMat4f("uProjection", glm::value_ptr(projection));
         scene.draw(&renderer, &test, windowWidth, windowHeight);
         glGetError();
-
+        
 
 
         glfwSwapBuffers(window);
-        
+
+
         // Process all pending events (keyboard, mouse, window events)
         // This keeps the window responsive and updates internal state
         glfwPollEvents();    

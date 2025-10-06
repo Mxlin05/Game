@@ -1,5 +1,6 @@
 #pragma once
 #include "Sprite.h"
+#include "Physics.h"
 
 class GameObject{
     public:
@@ -21,6 +22,6 @@ class GameObject{
         virtual void setSize(const glm::vec2& size);
         glm::vec2 getPosition() const;
         glm::vec2 getSize() const;
-        
-
+        AABB getAABB() const;
+        bool checkCollision(const GameObject &other) const;
 };
