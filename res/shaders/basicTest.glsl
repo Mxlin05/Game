@@ -1,25 +1,28 @@
 #shader vertex
 #version 330 core
 
-layout(location = 0) in vec3 aPos;     // Vertex position
-layout(location = 1) in vec3 aColor;   // Vertex color
+layout(location = 0) in vec2 aPos;
+layout(location = 1) in vec2 aTexCoord;
 
-out vec3 vColor;                       // Pass to fragment shader
+uniform mat4 uModel;
+uniform mat4 uView;
+uniform mat4 uProjection;
 
-void main()
-{
-    gl_Position = vec4(aPos, 1.0);     // Transform vertex position
-    vColor = aColor;                   // Pass color along to fragment shader
+out vec2 TexCoord;
+
+void main() {
+    gl_Position = uProjection * uView * uModel * vec4(aPos, 0.0, 1.0);
+    TexCoord = aTexCoord;
 }
 
 #shader fragment
 #version 330 core
 
-in vec3 vColor;                        // Received from vertex shader
+in vec2 TexCoord;           // from vertex shader
+out vec4 FragColor;
 
-out vec4 FragColor;                    // Output fragment color
+uniform sampler2D uTexture; // texture bound to slot 0
 
-void main()
-{
-    FragColor = vec4(vColor, 1.0);     // Output the interpolated color
+void main() {
+    FragColor = texture(uTexture, TexCoord);
 }
