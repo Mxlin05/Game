@@ -8,6 +8,7 @@ class GameObject{
         glm::vec2 position;
         glm::vec2 size;
         glm::vec2 rotation;
+        AABB* aabbPtr;
         //need to add more abouot physics, anminations and more
 
 
@@ -22,6 +23,4 @@ class GameObject{
         virtual void setSize(const glm::vec2& size);
         glm::vec2 getPosition() const;
         glm::vec2 getSize() const;
-        AABB getAABB() const;
-        bool checkCollision(const GameObject &other) const;
 };

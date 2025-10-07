@@ -1,5 +1,6 @@
 #pragma once
 #include "GameObject.h"
+#include "Physics.h"
 
 class Player : public GameObject{
     
@@ -16,6 +17,7 @@ class Player : public GameObject{
 
         void draw(int windowWidth, int windowHeight) const override;
         void update(const glm::vec2 &move, float deltaTime);
+        void updateAABB();
 
         glm::vec2 getPosition() const;
 };

@@ -120,8 +120,8 @@ int main()
     Sprite sprite1(&texture1, &test, &renderer);
     Sprite sprite2(&texture2, &test, &renderer);
 
-    Player player1(&sprite2, glm::vec2(0.0f, 0.0f), glm::vec2(200.0f, 200.0f), glm::vec2(0.0f));
-    GameObject obj2(&sprite1, glm::vec2(100.0f, 100.0f), glm::vec2(200.0f, 200.0f), glm::vec2(0.0f)); 
+    Player player1(&sprite2, glm::vec2(0.0f, 0.0f), glm::vec2(100.0f, 100.0f), glm::vec2(0.0f));
+    GameObject obj2(&sprite1, glm::vec2(500.0f, 500.0f), glm::vec2(200.0f, 200.0f), glm::vec2(0.0f)); 
     
 
     TileMap tileMap("res/tilemap.csv");
@@ -134,9 +134,6 @@ int main()
     float lastTime = glfwGetTime();
     while(!glfwWindowShouldClose(window))
     {
-        if (player1.checkCollision(obj2)){
-            cout << "Collision detected" << endl;
-        }
         float currentTime = glfwGetTime();
         float deltaTime = currentTime - lastTime;
         // Swap the front and back buffers

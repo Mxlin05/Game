@@ -2,7 +2,9 @@
 #include <iostream>
 #include "Physics.h"
 GameObject::GameObject(Sprite *sprite, glm::vec2 position, glm::vec2 size, glm::vec2 rotation) 
-    : sprite(sprite), position(position), size(size), rotation(rotation) {
+    : sprite(sprite), position(position), size(size), rotation(rotation), aabbPtr(nullptr) {
+    Physics::addAABB(Physics::createAABB(position, size));
+    aabbPtr = &Physics::aabbs.back();
 }
 
 GameObject::~GameObject() {
@@ -27,13 +29,5 @@ glm::vec2 GameObject::getPosition() const {
 
 glm::vec2 GameObject::getSize() const {
     return size;
-}
-
-AABB GameObject::getAABB() const {
-    return Physics::createAABB(position, size);
-}
-
-bool GameObject::checkCollision(const GameObject &other) const {
-    return Physics::aabbOverlap(getAABB(), other.getAABB());
 }
     
