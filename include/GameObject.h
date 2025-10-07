@@ -8,7 +8,7 @@ class GameObject{
         glm::vec2 position;
         glm::vec2 size;
         glm::vec2 rotation;
-        AABB* aabbPtr;
+        size_t aabbID;
         //need to add more abouot physics, anminations and more
 
 

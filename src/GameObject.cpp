@@ -2,9 +2,9 @@
 #include <iostream>
 #include "Physics.h"
 GameObject::GameObject(Sprite *sprite, glm::vec2 position, glm::vec2 size, glm::vec2 rotation) 
-    : sprite(sprite), position(position), size(size), rotation(rotation), aabbPtr(nullptr) {
+    : sprite(sprite), position(position), size(size), rotation(rotation) {
     Physics::addAABB(Physics::createAABB(position, size));
-    aabbPtr = &Physics::aabbs.back();
+    aabbID = Physics::getAABBCount() - 1;
 }
 
 GameObject::~GameObject() {

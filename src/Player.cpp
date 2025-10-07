@@ -6,9 +6,7 @@ Player::Player(Sprite *sprite, glm::vec2 position, glm::vec2 size, glm::vec2 rot
 }
 
 Player::~Player() {
-    if (aabbPtr){
-        Physics::removeAABB(*aabbPtr);
-    }
+    Physics::removeAABB(Physics::getAABB_byID(aabbID));
 }
 
 void Player::draw(int windowWidth, int windowHeight) const {
@@ -25,11 +23,14 @@ void Player::update(const glm::vec2 &move, float deltaTime){
     updateAABB();
 
     std::cout << "number of items: " << Physics::getAABBCount() << std::endl;
+
     for (size_t i = 0; i < Physics::getAABBCount(); i++){
-        if (aabbPtr == &Physics::aabbs[i]){
+        if (aabbID == Physics::aabbs[i].id){
+            std::cout << "skipping self" << std::endl;
             continue;   
         }
-        if (Physics::aabbOverlap(*aabbPtr, Physics::aabbs[i])){
+        if (Physics::aabbOverlap(Physics::getAABB_byID(aabbID), Physics::getAABB_byID(i))){
+            std::cout << "collision detected" << std::endl;
             position = old;
             updateAABB();
             break;
@@ -39,8 +40,8 @@ void Player::update(const glm::vec2 &move, float deltaTime){
 }
 
 void Player::updateAABB(){
-    if (aabbPtr){
-        Physics::updateAABB(*aabbPtr, position, size);
+    if (aabbID >= 0){
+        Physics::updateAABB(aabbID, position, size);
     }
 }
 
