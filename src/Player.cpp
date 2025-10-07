@@ -17,24 +17,25 @@ void Player::draw(int windowWidth, int windowHeight) const {
 
 void Player::update(const glm::vec2 &move, float deltaTime){
     //if player aabb collides iwth any of the aabbs in the array, don't change the position
-    glm::vec2 old = position;
-    position += move * speed * deltaTime;
+    //glm::vec2 old = position;
+    //position += move * speed * deltaTime;
     //update the aabb
     //check the updated aabb for collisions
     //no collisions, move on, else resolve the collision
     updateAABB();
 
-    std::cout << "number of items: " << Physics::getAABBCount() << std::endl;
     for (size_t i = 0; i < Physics::getAABBCount(); i++){
+        std::cout << &Physics::aabbs[i] << std::endl;
         if (aabbPtr == &Physics::aabbs[i]){
+            //std::cout << "skipping self" << std::endl;
             continue;   
         }
         if (Physics::aabbOverlap(*aabbPtr, Physics::aabbs[i])){
-            position = old;
-            updateAABB();
-            break;
+            //updateAABB();
+            ;
         }
     }
+    position += move * speed * deltaTime;
     //no collisions, move on
 }
 

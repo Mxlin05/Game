@@ -23,3 +23,7 @@ int Item::getId() const {
 int Item::getQuantity() const {
     return quantity;
 }
+
+void Item::use(){
+    
+}
