@@ -120,8 +120,8 @@ int main()
     Sprite sprite1(&texture1, &test, &renderer);
     Sprite sprite2(&texture2, &test, &renderer);
 
-    Player player1(&sprite2, glm::vec2(0.0f, 0.0f), glm::vec2(200.0f, 200.0f), glm::vec2(0.0f));
-    GameObject obj2(&sprite1, glm::vec2(100.0f, 100.0f), glm::vec2(200.0f, 200.0f), glm::vec2(0.0f)); 
+    Player player1(&sprite2, glm::vec2(0.0f, 0.0f), glm::vec2(100.0f, 100.0f), glm::vec2(0.0f));
+    GameObject obj2(&sprite1, glm::vec2(500.0f, 500.0f), glm::vec2(200.0f, 200.0f), glm::vec2(0.0f)); 
     
 
     TileMap tileMap("res/tilemap.csv");
@@ -153,11 +153,12 @@ int main()
         test.setUniformMat4f("uProjection", glm::value_ptr(projection));
         scene.draw(&renderer, &test, windowWidth, windowHeight);
         glGetError();
-
+        
 
 
         glfwSwapBuffers(window);
-        
+
+
         // Process all pending events (keyboard, mouse, window events)
         // This keeps the window responsive and updates internal state
         glfwPollEvents();    
