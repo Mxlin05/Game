@@ -36,7 +36,7 @@ void Player::update(const glm::vec2 &move){
             break;
         }
     }
-    position += move * speed * deltaTime;
+    position += move * speed;
     //no collisions, move on
 }
 
