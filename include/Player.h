@@ -18,7 +18,7 @@ class Player : public GameObject{
         //add collisions
 
         void draw(int windowWidth, int windowHeight) const override;
-        void update(const glm::vec2 &move, float deltaTime);
+        void update(const glm::vec2 &move);
         void updateAABB();
 
         glm::vec2 getPosition() const;

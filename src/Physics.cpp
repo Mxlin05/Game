@@ -2,7 +2,8 @@
 #include <iostream>
 
 //aabb functions
-AABB::AABB(glm::vec2 min, glm::vec2 max){
+AABB::AABB(size_t id, glm::vec2 min, glm::vec2 max){
+    this->id = id;
     this->min = min;
     this->max = max;
 }
@@ -36,7 +37,7 @@ bool AABB::operator==(const AABB& other) const{
 std::vector<AABB> Physics::aabbs;
 
 AABB Physics::createAABB(glm::vec2 position, glm::vec2 size){
-    return AABB(position, position + size);
+    return AABB(aabbs.size(), position, position + size);
 }
 
 //Check for AABB overlaps
@@ -45,6 +46,9 @@ bool Physics::aabbOverlap(AABB a, AABB b){
     glm::vec2 a_max = a.getMax();
     glm::vec2 b_min = b.getMin();
     glm::vec2 b_max = b.getMax();
+
+    std::cout << "a_min.x: " << a_min.x << " a_max.x: " << a_max.x << " b_min.x: " << b_min.x << " b_max.x: " << b_max.x << std::endl;
+    std::cout << "a_min.y: " << a_min.y << " a_max.y: " << a_max.y << " b_min.y: " << b_min.y << " b_max.y: " << b_max.y << std::endl;
     return (a_min.x < b_max.x && a_max.x > b_min.x && a_min.y < b_max.y && a_max.y > b_min.y);
 }
 
@@ -81,15 +85,33 @@ void Physics::clearAABBs(){
     aabbs.clear();
 }
 
-void Physics::updateAABB(AABB& aabb, glm::vec2 position, glm::vec2 size){
-    aabb.setMin(position);
-    aabb.setMax(position + size);
+void Physics::updateAABB(size_t id, glm::vec2 position, glm::vec2 size){
+    AABB* aabb = getAABB_byID_ptr(id);
+    if (aabb == nullptr){
+        return;
+    }
+    aabb->setMin(position);
+    aabb->setMax(position + size);
 }
 
 size_t Physics::getAABBCount(){
     return aabbs.size();
 }
 
-AABB Physics::getAABB(size_t index){
-    return aabbs[index];
+AABB Physics::getAABB_byID(size_t ID){
+    for (size_t i = 0; i < aabbs.size(); i++){
+        if (aabbs[i].id == ID){
+            return aabbs[i];
+        }
+    }
+    return AABB(0, glm::vec2(0,0), glm::vec2(0,0));
+}
+
+AABB* Physics::getAABB_byID_ptr(size_t ID){
+    for (size_t i = 0; i < aabbs.size(); i++){
+        if (aabbs[i].id == ID){
+            return &aabbs[i];
+        }
+    }
+    return nullptr;
 }

@@ -2,37 +2,38 @@
 #include "Physics.h"
 
 Player::Player(Sprite *sprite, glm::vec2 position, glm::vec2 size, glm::vec2 rotation)
-    : GameObject(sprite, position, size, rotation), velocity(0.0f, 0.0f), speed(10.0f) {
+    : GameObject(sprite, position, size, rotation), velocity(10.0f, 10.0f), speed(50.0f) {
 }
 
 Player::~Player() {
-    if (aabbPtr){
-        Physics::removeAABB(*aabbPtr);
-    }
+    Physics::removeAABB(Physics::getAABB_byID(aabbID));
 }
 
 void Player::draw(int windowWidth, int windowHeight) const {
     GameObject::draw(windowWidth, windowHeight);
 }
 
-void Player::update(const glm::vec2 &move, float deltaTime){
+void Player::update(const glm::vec2 &move){
     //if player aabb collides iwth any of the aabbs in the array, don't change the position
-    //glm::vec2 old = position;
-    //position += move * speed * deltaTime;
+    glm::vec2 old = position;
+    position += move * speed;
     //update the aabb
     //check the updated aabb for collisions
     //no collisions, move on, else resolve the collision
     updateAABB();
 
+    std::cout << "number of items: " << Physics::getAABBCount() << std::endl;
+
     for (size_t i = 0; i < Physics::getAABBCount(); i++){
-        std::cout << &Physics::aabbs[i] << std::endl;
-        if (aabbPtr == &Physics::aabbs[i]){
-            //std::cout << "skipping self" << std::endl;
+        if (aabbID == Physics::aabbs[i].id){
+            std::cout << "skipping self" << std::endl;
             continue;   
         }
-        if (Physics::aabbOverlap(*aabbPtr, Physics::aabbs[i])){
-            //updateAABB();
-            ;
+        if (Physics::aabbOverlap(Physics::getAABB_byID(aabbID), Physics::getAABB_byID(i))){
+            std::cout << "collision detected" << std::endl;
+            position = old;
+            updateAABB();
+            break;
         }
     }
     position += move * speed * deltaTime;
@@ -40,8 +41,8 @@ void Player::update(const glm::vec2 &move, float deltaTime){
 }
 
 void Player::updateAABB(){
-    if (aabbPtr){
-        Physics::updateAABB(*aabbPtr, position, size);
+    if (aabbID >= 0){
+        Physics::updateAABB(aabbID, position, size);
     }
 }
 
