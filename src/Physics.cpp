@@ -47,8 +47,8 @@ bool Physics::aabbOverlap(AABB a, AABB b){
     glm::vec2 b_min = b.getMin();
     glm::vec2 b_max = b.getMax();
 
-    std::cout << "a_min.x: " << a_min.x << " a_max.x: " << a_max.x << " b_min.x: " << b_min.x << " b_max.x: " << b_max.x << std::endl;
-    std::cout << "a_min.y: " << a_min.y << " a_max.y: " << a_max.y << " b_min.y: " << b_min.y << " b_max.y: " << b_max.y << std::endl;
+    //std::cout << "a_min.x: " << a_min.x << " a_max.x: " << a_max.x << " b_min.x: " << b_min.x << " b_max.x: " << b_max.x << std::endl;
+    //std::cout << "a_min.y: " << a_min.y << " a_max.y: " << a_max.y << " b_min.y: " << b_min.y << " b_max.y: " << b_max.y << std::endl;
     return (a_min.x < b_max.x && a_max.x > b_min.x && a_min.y < b_max.y && a_max.y > b_min.y);
 }
 

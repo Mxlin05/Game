@@ -4,13 +4,14 @@
 #include "TileMap.h"
 #include "Render.h"
 #include "Player.h"
+#include "Enemy.h"
 class Scene {
     
     public:
         TileMap *tileMap;
         Player *player;
 
-        std::vector<GameObject *> Enemies;
+        std::vector<Enemy *> Enemies;
         //need to add other rhings based on what is needed per level
         std::vector<GameObject *> objects;
 
@@ -18,6 +19,6 @@ class Scene {
         ~Scene();
 
         void draw(Render *renderer, Shader *shader, int windowWidth, int windowHeight) const;
-        void addEnemy(GameObject *enemy);
+        void addEnemy(Enemy *enemy);
         void addObjects(GameObject *object);
 };

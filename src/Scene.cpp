@@ -1,5 +1,5 @@
 #include "Scene.h"
-
+#include <iostream>
 Scene::Scene(Player *player, TileMap *tileMap) : player(player), tileMap(tileMap){
     //will add as needed
 }
@@ -15,6 +15,7 @@ void Scene::draw(Render *renderer, Shader *shader, int windowWidth, int windowHe
     player-> draw(windowWidth, windowHeight);
     for (const auto& enemy : Enemies){
         enemy->draw(windowWidth, windowHeight);
+        //std::cout << "drawing enemy" << std::endl;
     }
     for (const auto& object : objects){
         object->draw(windowWidth, windowHeight);
@@ -23,8 +24,8 @@ void Scene::draw(Render *renderer, Shader *shader, int windowWidth, int windowHe
     //will; add moore ass needed
 }
 
-void Scene::addEnemy(GameObject *enemy){
-    //will add as needed
+void Scene::addEnemy(Enemy *enemy){
+    Enemies.push_back(enemy);
 }
 
 void Scene::addObjects(GameObject *object){

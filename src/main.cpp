@@ -13,6 +13,7 @@
 #include "Scene.h"
 #include "TileMap.h"
 #include "Player.h"
+#include "Enemy.h"
 
 using namespace std; 
 
@@ -121,12 +122,12 @@ int main()
     Sprite sprite2(&texture2, &test, &renderer);
 
     Player player1(&sprite2, glm::vec2(0.0f, 0.0f), glm::vec2(100.0f, 100.0f), glm::vec2(0.0f));
-    GameObject obj2(&sprite1, glm::vec2(500.0f, 500.0f), glm::vec2(100.0f, 100.0f), glm::vec2(0.0f)); 
+    Enemy obj2(&sprite1, glm::vec2(900.0f, 900.0f), glm::vec2(100.0f, 100.0f), glm::vec2(0.0f),  glm::vec2(900.0f, 900.0f), glm::vec2(700.0f), 0.05f, 300.0f); 
     
 
     TileMap tileMap("res/tilemap.csv");
     Scene scene(&player1, &tileMap);
-    scene.addObjects(&obj2);
+    scene.addEnemy(&obj2);
     
     int windowWidth, windowHeight;
     glfwGetWindowSize(window, &windowWidth, &windowHeight);
@@ -136,6 +137,7 @@ int main()
     {
         float currentTime = glfwGetTime();
         float deltaTime = currentTime - lastTime;
+        
         // Swap the front and back buffers
         // This displays what we've rendered and prepares for the next frame
         renderer.clear();
@@ -152,6 +154,10 @@ int main()
         test.setUniformMat4f("uView", glm::value_ptr(view));
         test.setUniformMat4f("uProjection", glm::value_ptr(projection));
         scene.draw(&renderer, &test, windowWidth, windowHeight);
+
+        for (auto& enemy : scene.Enemies) {
+            enemy->update(deltaTime, player1.getPosition());
+        }
         glGetError();
         
 

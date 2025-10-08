@@ -26,17 +26,16 @@ void Player::update(const glm::vec2 &move){
 
     for (size_t i = 0; i < Physics::getAABBCount(); i++){
         if (aabbID == Physics::aabbs[i].id){
-            std::cout << "skipping self" << std::endl;
+            //std::cout << "skipping self" << std::endl;
             continue;   
         }
         if (Physics::aabbOverlap(Physics::getAABB_byID(aabbID), Physics::getAABB_byID(i))){
-            std::cout << "collision detected" << std::endl;
+            //std::cout << "collision detected" << std::endl;
             position = old;
             updateAABB();
             break;
         }
     }
-    position += move * speed;
     //no collisions, move on
 }
 
