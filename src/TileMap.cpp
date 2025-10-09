@@ -12,7 +12,8 @@ TileMap::TileMap(const char *filePath) {
 
     //need to fix the pixels
     atlas->addRegion(2, 0, 0, 1060, 760, 1212, 1464); 
-    atlas->addRegion(0, 700, 750, 350, 700, 1212, 1464); 
+    atlas->addRegion(0, 700, 750, 350, 764, 1212, 1464); 
+    atlas->addRegion(1, 0, 790, 690, 700, 1212, 1464); 
 }
 TileMap::~TileMap() {
 
@@ -69,4 +70,23 @@ void TileMap::draw(Render& renderer, Shader& shader, int windowWidth, int window
             renderer.Draw(renderer.vao, renderer.ib, shader);
         }
     }
+}
+
+std::vector<int> TileMap::GenerateWalkabilityGrid() {
+    std::vector<int> walkGrid(width * height, 1);  
+
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+            int tileType = map[y][x];
+
+
+            if (tileType == 0) {
+                walkGrid[y * width + x] = 0;  
+            } else {
+                walkGrid[y * width + x] = 1;  
+            }
+        }
+    }
+
+    return walkGrid;
 }

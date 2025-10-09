@@ -1,5 +1,6 @@
 #include "Enemy.h"
 
+
 Enemy::Enemy(Sprite *sprite, glm::vec2 position, glm::vec2 size, glm::vec2 rotation, glm::vec2 patrolStart, glm::vec2 patrolEnd, float speed, float detectionRange) 
     : GameObject(sprite, position, size, rotation), patrolStart(patrolStart), patrolEnd(patrolEnd), speed(speed), dectectionRange(detectionRange) {
     state = AIState::Idle;
@@ -8,71 +9,117 @@ Enemy::Enemy(Sprite *sprite, glm::vec2 position, glm::vec2 size, glm::vec2 rotat
 Enemy::~Enemy() {
 
 }
-
 void Enemy::updateAABB(){
     if (aabbID >= 0){
         Physics::updateAABB(aabbID, position, size);
     }
 }
 
-void Enemy::update(float deltaTime, const glm ::vec2 &playerPos){
+void Enemy::update(float deltaTime, const glm::vec2 &playerPos) {
     float distance = glm::length(playerPos - position);
+    static glm::vec2 lastTarget = glm::vec2(-1, -1); 
     glm::vec2 old = position;
-    std::cout << "Enemy position: (" << position.x << ", " << position.y << ")\n";
-    std::cout << "case:" << static_cast<int>(state) << std::endl;
-
+    
     switch (state) {
         case AIState::Idle:
-            if (distance < dectectionRange)
+            if (distance < dectectionRange) {
                 state = AIState::Chase;
-            else
-                state = AIState::Patrol;
-            break;
-
-        case AIState::Patrol: {
-            if (glm::length(patrolEnd - position) < 5.0f)
-                std::swap(patrolStart, patrolEnd);
-
-            glm::vec2 dir = glm::normalize(patrolEnd - position);
-            position += dir * speed;
-            for (size_t i = 0; i < Physics::getAABBCount(); i++) {
-                if (aabbID == Physics::aabbs[i].id) {
-                    std::cout << "skipping self" << std::endl;
-                    continue;   
-                }
-                if (Physics::aabbOverlap(Physics::getAABB_byID(aabbID), Physics::getAABB_byID(i))) {
-                    std::cout << "collision detected" << std::endl;
-                    position = old;
-                    updateAABB();
-                    break;
+                if (lastTarget != playerPos) {
+                    calculatePath(playerPos);
+                    lastTarget = playerPos;
                 }
             }
-
-            if (distance < dectectionRange)
-                state = AIState::Chase;
             break;
-        }
+
+        case AIState::Patrol:
+            if (lastTarget != patrolEnd) {
+                calculatePath(patrolEnd);
+                lastTarget = patrolEnd;
+            }
+            // follow path as usual
+            followPath(deltaTime);
+            if (distance < dectectionRange) {
+                state = AIState::Chase;
+            }
+            break;
 
         case AIState::Chase:
-            if (distance > dectectionRange)
+            if (distance > dectectionRange) {
                 state = AIState::Patrol;
-            else
-                position += glm::normalize(playerPos - position) * speed;
-                for (size_t i = 0; i < Physics::getAABBCount(); i++){
-                    if (aabbID == Physics::aabbs[i].id){
-                        std::cout << "skipping self" << std::endl;
-                        continue;   
-                    }
-                    if (Physics::aabbOverlap(Physics::getAABB_byID(aabbID), Physics::getAABB_byID(i))){
-                        std::cout << "collision detected" << std::endl;
-                        position = old;
-                        updateAABB();
-                        break;
-                    }
+                if (lastTarget != patrolEnd) {
+                    calculatePath(patrolEnd);
+                    lastTarget = patrolEnd;
                 }
+            } else {
+                if (lastTarget != playerPos) {
+                    calculatePath(playerPos);
+                    lastTarget = playerPos;
+                }
+                followPath(deltaTime);
+            }
             break;
-
     }
 
-    updateAABB(); 
+    // Collision detection
+    for (size_t i = 0; i < Physics::getAABBCount(); i++) {
+        if (aabbID == Physics::aabbs[i].id) {
+            // Skip self
+            continue;
+        }
+        if (Physics::aabbOverlap(Physics::getAABB_byID(aabbID), Physics::getAABB_byID(i))) {
+            std::cout << "Collision detected" << std::endl;
+            position = old;
+            break;
+        }
+    }
+
+    updateAABB();
+}
+
+void Enemy::calculatePath(const glm::vec2& target) {
+    if (!pathFinder) return;
+
+    int tileSize = 32; 
+
+    glm::ivec2 startTile = worldToTile(position, tileSize);
+    glm::ivec2 endTile = worldToTile(target, tileSize);
+
+    //std::cout << "Walkable start? " << pathFinder->isWalkable(startTile.x, startTile.y) << "\n";
+    //std::cout << "Walkable end? " << pathFinder->isWalkable(endTile.x, endTile.y) << "\n";
+    path = pathFinder->findPath(startTile, endTile);
+    pathIndex = 0;
+}
+
+void Enemy::followPath(float deltaTime) {
+    if (path.empty() || pathIndex >= path.size()) {
+        //std::cout << "No path or end of path reached." << std::endl;
+        return;
+    }
+
+    int tileSize = 32;
+    glm::vec2 targetPos = tileToWorld(path[pathIndex], tileSize);
+    
+    glm::vec2 direction = targetPos - position;
+    float dist = glm::length(direction);
+
+    //std::cout << "Distance to waypoint: " << dist << std::endl;
+    printPath(path);
+    if (dist < 1.0f) {
+        pathIndex++;
+        std::cout << "Advancing to waypoint index: " << pathIndex << std::endl;
+    } else {
+        direction = glm::normalize(direction);
+        position += direction * speed * deltaTime;
+        std::cout << "Moving to: " << position.x << ", " << position.y << std::endl;
+    }
+}
+
+glm::ivec2 Enemy::worldToTile(const glm::vec2& pos, float tileSize) {
+    int x = static_cast<int>(pos.x) / tileSize;
+    int y = static_cast<int>(pos.y) / tileSize;
+    return glm::ivec2(x, y);
+}
+
+glm::vec2 Enemy::tileToWorld(const glm::ivec2& tile, float tileSize) {
+    return glm::vec2(tile.x * tileSize + tileSize / 2, tile.y * tileSize + tileSize / 2);
 }

@@ -22,7 +22,7 @@ void Player::update(const glm::vec2 &move){
     //no collisions, move on, else resolve the collision
     updateAABB();
 
-    std::cout << "number of items: " << Physics::getAABBCount() << std::endl;
+    //std::cout << "number of items: " << Physics::getAABBCount() << std::endl;
 
     for (size_t i = 0; i < Physics::getAABBCount(); i++){
         if (aabbID == Physics::aabbs[i].id){

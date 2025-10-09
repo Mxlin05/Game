@@ -4,6 +4,7 @@
 #include "Render.h"
 #include "shader.h"
 #include <unordered_map>
+#include <iostream>
 
 class TileMap{
     public:
@@ -11,11 +12,25 @@ class TileMap{
         TileMap(const char *filePath);
         ~TileMap();
 
+        int width, height;
+        std::vector<std::vector<int>> map;
+
         void draw(Render& renderer, Shader& shader, int windowWidth, int windowHeight);
+        std::vector<int> GenerateWalkabilityGrid();
+
+        void printWalkabilityGrid(const std::vector<int>& grid, int width, int height) {
+            for (int y = 0; y < height; ++y) {
+                for (int x = 0; x < width; ++x) {
+                    std::cout << grid[y * width + x];
+                    if (x < width - 1) std::cout << ", ";
+                }
+                std::cout << "\n";
+            }
+        }
 
     private:
-        std::vector<std::vector<int>> map;
-        int width, height;
+        
+        
         void loadFromFile(const char *filePath);
 
 };

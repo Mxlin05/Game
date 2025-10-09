@@ -1,6 +1,11 @@
 #pragma once
 #include "GameObject.h"
 
+struct Path {
+    std::vector<glm::vec2> points;
+    size_t curr;
+};
+
 class Npc : public GameObject {
 
     public:
@@ -14,5 +19,6 @@ class Npc : public GameObject {
     void draw(int windowWidth, int windowHeight) const override;
     void update(const glm::vec2 &move, float deltaTime);
     glm::vec2 getPosition() const;
+    
     
 };

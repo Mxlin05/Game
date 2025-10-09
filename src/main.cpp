@@ -14,6 +14,18 @@
 #include "TileMap.h"
 #include "Player.h"
 #include "Enemy.h"
+#include "PathFind.h"
+#include <chrono>
+
+// Declare these outside your game loop (e.g., as member variables)
+auto lastTime = std::chrono::high_resolution_clock::now();
+
+float getDeltaTime() {
+    auto currentTime = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<float> elapsed = currentTime - lastTime;
+    lastTime = currentTime;
+    return elapsed.count(); // seconds as float
+}
 
 using namespace std; 
 
@@ -122,10 +134,14 @@ int main()
     Sprite sprite2(&texture2, &test, &renderer);
 
     Player player1(&sprite2, glm::vec2(0.0f, 0.0f), glm::vec2(100.0f, 100.0f), glm::vec2(0.0f));
-    Enemy obj2(&sprite1, glm::vec2(900.0f, 900.0f), glm::vec2(100.0f, 100.0f), glm::vec2(0.0f),  glm::vec2(900.0f, 900.0f), glm::vec2(700.0f), 0.05f, 300.0f); 
+    Enemy obj2(&sprite1, glm::vec2(150.0f, 300.0f), glm::vec2(100.0f, 100.0f), glm::vec2(0.0f),  glm::vec2(150.0f, 300.0f), glm::vec2(400.0f), 50.0f, 300.0f); 
     
 
     TileMap tileMap("res/tilemap.csv");
+    std::vector<int> walkGrid = tileMap.GenerateWalkabilityGrid();
+    tileMap.printWalkabilityGrid(walkGrid, tileMap.width, tileMap.height);
+    PathFind pathFinder(tileMap.width, tileMap.height, walkGrid);
+    obj2.pathFinder = &pathFinder;
     Scene scene(&player1, &tileMap);
     scene.addEnemy(&obj2);
     
@@ -135,8 +151,7 @@ int main()
     float lastTime = glfwGetTime();
     while(!glfwWindowShouldClose(window))
     {
-        float currentTime = glfwGetTime();
-        float deltaTime = currentTime - lastTime;
+        float deltaTime = getDeltaTime();
         
         // Swap the front and back buffers
         // This displays what we've rendered and prepares for the next frame
@@ -167,7 +182,9 @@ int main()
 
         // Process all pending events (keyboard, mouse, window events)
         // This keeps the window responsive and updates internal state
-        glfwPollEvents();    
+        glfwPollEvents(); 
+        //std::cout << "Press Enter to continue..." << std::flush;
+        //std::cin.get();   
 
     }
 
