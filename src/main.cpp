@@ -195,7 +195,12 @@ int main()
         // Clear the screen first
         renderer.clear();
 
-        processInputs(window, deltaTime, &player1);
+        //needs to make sure it cannot move if on a screen        
+        if(g_uiManager->currScreen->active == false){
+            //std::cout << g_uiManager->currScreen->active << std::endl;
+            processInputs(window, deltaTime, &player1);
+        }
+
 
         camera.follow(player1.getPosition(), windowWidth, windowHeight);
         glm::mat4 view = camera.getViewMatrix();

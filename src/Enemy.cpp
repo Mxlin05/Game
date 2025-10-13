@@ -103,14 +103,14 @@ void Enemy::followPath(float deltaTime) {
     float dist = glm::length(direction);
 
     //std::cout << "Distance to waypoint: " << dist << std::endl;
-    printPath(path);
+    // printPath(path);
     if (dist < 1.0f) {
         pathIndex++;
         std::cout << "Advancing to waypoint index: " << pathIndex << std::endl;
     } else {
         direction = glm::normalize(direction);
         position += direction * speed * deltaTime;
-        std::cout << "Moving to: " << position.x << ", " << position.y << std::endl;
+        // std::cout << "Moving to: " << position.x << ", " << position.y << std::endl;
     }
 }
 

@@ -5,7 +5,6 @@
 #include "Shader.h"
 
 class StartMenuScreen : public UIScreen{
-    bool active;
     int windowWidth, windowHeight;
 
     public:

@@ -1,11 +1,6 @@
 #pragma once
 #include "GameObject.h"
 
-struct Path {
-    std::vector<glm::vec2> points;
-    size_t curr;
-};
-
 class Npc : public GameObject {
 
     public:
