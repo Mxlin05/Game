@@ -30,4 +30,3 @@ glm::vec2 GameObject::getPosition() const {
 glm::vec2 GameObject::getSize() const {
     return size;
 }
-    

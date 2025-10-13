@@ -2,6 +2,9 @@
 #include "GameObject.h"
 #include "Physics.h"
 #include "Inventory.h"
+
+
+
 class Player : public GameObject{
     
     public:
@@ -13,13 +16,21 @@ class Player : public GameObject{
         Player(Sprite *sprite, glm::vec2 position, glm::vec2 size, glm::vec2 rotation);
         ~Player();
 
+
         //add stats
+        Stats stats;
 
         //add collisions
 
         void draw(int windowWidth, int windowHeight) const override;
         void update(const glm::vec2 &move);
         void updateAABB();
+
+        void updateHealth(int h);
+        void updateArmor(int a);
+        void updateBattleSpeed(int b);
+        void updatePhysicalAttack(int a);
+        void updateMagicAttack(int a);
 
         glm::vec2 getPosition() const;
 };

@@ -123,3 +123,23 @@ glm::ivec2 Enemy::worldToTile(const glm::vec2& pos, float tileSize) {
 glm::vec2 Enemy::tileToWorld(const glm::ivec2& tile, float tileSize) {
     return glm::vec2(tile.x * tileSize + tileSize / 2, tile.y * tileSize + tileSize / 2);
 }
+
+void Enemy::updateHealth(int h){
+    stats.health = h;
+}
+
+void Enemy::updateArmor(int a){
+    stats.armor = a;
+}
+
+void Enemy::updateBattleSpeed(int b){
+    stats.battleSpeed = b;
+}
+
+void Enemy::updatePhysicalAttack(int a){
+    stats.physAttack = a;
+}
+
+void Enemy::updateMagicAttack(int a){
+    stats.magicAttack = a;
+}

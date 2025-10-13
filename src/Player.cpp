@@ -49,3 +49,23 @@ glm::vec2 Player::getPosition() const {
     //std::cout << "Player position: (" << position.x << ", " << position.y << ")\n";
     return position;
 }
+
+void Player::updateHealth(int h){
+    stats.health = h;
+}
+
+void Player::updateArmor(int a){
+    stats.armor = a;
+}
+
+void Player::updateBattleSpeed(int b){
+    stats.battleSpeed = b;
+}
+
+void Player::updatePhysicalAttack(int a){
+    stats.physAttack = a;
+}
+
+void Player::updateMagicAttack(int a){
+    stats.magicAttack = a;
+}

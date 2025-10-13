@@ -2,6 +2,16 @@
 #include "Sprite.h"
 #include "Physics.h"
 
+class Stats {
+    public:
+        //add stats
+        int health;
+        int armor;
+        int battleSpeed;
+        int physAttack;
+        int magicAttack;
+};
+
 class GameObject{
     public:
         Sprite *sprite;
@@ -21,6 +31,7 @@ class GameObject{
         
         virtual void setPosition(const glm::vec2& position);
         virtual void setSize(const glm::vec2& size);
+
         glm::vec2 getPosition() const;
         glm::vec2 getSize() const;
 };
