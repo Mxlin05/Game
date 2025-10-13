@@ -29,7 +29,12 @@ public:
     void setUniformVec2(const std::string &name, const glm::vec2 &vector) const {
         glUniform2f(glGetUniformLocation(ID, name.c_str()), vector.x, vector.y);
     }
-    
+    void setUniformVec3(const std::string &name, const glm::vec3 &vector) const {
+        glUniform3f(glGetUniformLocation(ID, name.c_str()), vector.x, vector.y, vector.z);
+    }
+    void setUniformVec4(const std::string &name, const glm::vec4 &vector) const {
+        glUniform4f(glGetUniformLocation(ID, name.c_str()), vector.x, vector.y, vector.z, vector.w);
+    }
 
 private:
 

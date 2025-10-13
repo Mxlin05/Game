@@ -9,7 +9,7 @@
 class UIManager {
 
     public:
-        std::unordered_map<std::string, std::unique_ptr<UIScreen>> screens;\
+        std::unordered_map<std::string, std::unique_ptr<UIScreen>> screens;
         UIScreen *currScreen = nullptr;
 
         UIManager();

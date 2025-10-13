@@ -1,7 +1,7 @@
 #include "UIManager.h"
 
 UIManager::UIManager(){
-
+    
 }
 
 UIManager::~UIManager(){
@@ -19,7 +19,7 @@ void UIManager::setCurrScreen(const std::string &name){
     currScreen = screens[name].get();
 }
 
-void UIManager::update(float deltaTime = 0){
+void UIManager::update(float deltaTime){
     if(currScreen != nullptr){
         currScreen->update(deltaTime);
     }

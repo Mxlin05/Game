@@ -29,4 +29,9 @@ class Item {
         int getId() const;
         int getQuantity() const;
         virtual void use();
+        
+        // Equality operator for std::find
+        bool operator==(const Item& other) const {
+            return id == other.id;
+        }
 };

@@ -8,6 +8,7 @@ TextRenderer::TextRenderer(const Shader &shader)
     }
 
 void TextRenderer::Load(const std::string font, unsigned int fontSize) {
+#ifdef FREETYPE_AVAILABLE
     FT_Library ft;
     if (FT_Init_FreeType(&ft)) {
         std::cerr << "ERROR::FREETYPE: Could not init FreeType" << std::endl;

@@ -1,5 +1,6 @@
 #include "Inventory.h"
 #include <algorithm>
+#include <string>
 
 //PLS FUCKING READ COMMENT
 Inventory::Inventory()
@@ -33,7 +34,13 @@ void Inventory::removeItem(int id){
                 i.quantity--;
                 return;
             }else{
-                items.erase(std::remove(items.begin(), items.end(), i), items.end());
+                // Remove the item from the vector
+                for (auto it = items.begin(); it != items.end(); ++it) {
+                    if (it->id == i.id) {
+                        items.erase(it);
+                        break;
+                    }
+                }
                 return;
             }
         }
@@ -47,9 +54,15 @@ Item Inventory::getItem(int id){
             return i;
         }
     }
+    // Return a default item if not found
+    return Item("", itemType::NONE, -1, 0);
 }
 
 //will add later
 std::string Inventory::listItems() const{
-
+    std::string result = "";
+    for (const auto &item : items) {
+        result += item.name + " x" + std::to_string(item.quantity) + "\n";
+    }
+    return result;
 }

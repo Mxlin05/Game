@@ -9,7 +9,7 @@ LIBS := -lglfw3dll -lopengl32 -lgdi32 -luser32 -lkernel32
 # Files and directories
 OUTDIR := build
 TARGET := $(OUTDIR)/main.exe
-SOURCES := src/main.cpp src/glad.c src/Input.cpp src/Shadder.cpp src/VertexBuffer.cpp src/IndexBuffer.cpp src/VertexArray.cpp src/Render.cpp src/Camera.cpp src/GameObject.cpp src/Scene.cpp src/Sprite.cpp src/Texture.cpp src/TileMap.cpp src/Player.cpp src/Physics.cpp src/Enemy.cpp src/Pathfind.cpp
+SOURCES := src/main.cpp src/glad.c src/Input.cpp src/Shadder.cpp src/VertexBuffer.cpp src/IndexBuffer.cpp src/VertexArray.cpp src/Render.cpp src/Camera.cpp src/GameObject.cpp src/Scene.cpp src/Sprite.cpp src/Texture.cpp src/TileMap.cpp src/Player.cpp src/Physics.cpp src/Enemy.cpp src/Pathfind.cpp src/UIManager.cpp src/UIScreen.cpp src/StartMenuScreen.cpp src/Item.cpp src/Inventory.cpp src/Weapon.cpp src/Armor.cpp src/Npc.cpp
 
 .PHONY: all run clean
 

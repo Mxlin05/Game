@@ -15,6 +15,9 @@
 #include "Player.h"
 #include "Enemy.h"
 #include "PathFind.h"
+#include "UIManager.h"
+#include "UIScreen.h"
+#include "StartMenuScreen.h"
 #include <chrono>
 
 // Declare these outside your game loop (e.g., as member variables)
@@ -41,6 +44,30 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     // Tell OpenGL the new size of the rendering area
     // This ensures graphics are properly scaled when window is resized
     glViewport(0, 0, width, height);
+}
+
+// Global UI manager for input callbacks
+UIManager* g_uiManager = nullptr;
+
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+{
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+        double xpos, ypos;
+        glfwGetCursorPos(window, &xpos, &ypos);
+        
+        if (g_uiManager && g_uiManager->currScreen) {
+            g_uiManager->currScreen->onMouseClick(xpos, ypos);
+        }
+    }
+}
+
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    if (action == GLFW_PRESS) {
+        if (g_uiManager && g_uiManager->currScreen) {
+            g_uiManager->currScreen->onKeyPress(key);
+        }
+    }
 }
 
 
@@ -114,6 +141,10 @@ int main()
     // Set up callback function for window resize events
     // This ensures the viewport updates when the window is resized
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    
+    // Set up UI input callbacks
+    glfwSetMouseButtonCallback(window, mouse_button_callback);
+    glfwSetKeyCallback(window, key_callback);
 
     // ========================================
     // 6. MAIN RENDER LOOP
@@ -121,11 +152,11 @@ int main()
     
     // Keep the window open until the user closes it
     Shader test("res/shaders/basicTest.glsl");
+    Shader uiShader("res/shaders/ui.glsl");
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-
+    
     Render renderer;
     Texture texture1("res/textures/lilla_fat_cheeks.png");
     Texture texture2("res/textures/test1.png");
@@ -135,7 +166,6 @@ int main()
 
     Player player1(&sprite2, glm::vec2(0.0f, 0.0f), glm::vec2(100.0f, 100.0f), glm::vec2(0.0f));
     Enemy obj2(&sprite1, glm::vec2(150.0f, 300.0f), glm::vec2(100.0f, 100.0f), glm::vec2(0.0f),  glm::vec2(150.0f, 300.0f), glm::vec2(400.0f), 50.0f, 300.0f); 
-    
 
     TileMap tileMap("res/tilemap.csv");
     std::vector<int> walkGrid = tileMap.GenerateWalkabilityGrid();
@@ -148,13 +178,21 @@ int main()
     int windowWidth, windowHeight;
     glfwGetWindowSize(window, &windowWidth, &windowHeight);
     Camera camera(windowWidth, windowHeight);
+    
+    // Initialize UI system
+    UIManager uiManager;
+    uiManager.addScreen("StartMenu", std::make_unique<StartMenuScreen>(windowWidth, windowHeight));
+    uiManager.setCurrScreen("StartMenu");
+    
+    // Set global UI manager for input callbacks
+    g_uiManager = &uiManager;
+    
     float lastTime = glfwGetTime();
     while(!glfwWindowShouldClose(window))
     {
         float deltaTime = getDeltaTime();
         
-        // Swap the front and back buffers
-        // This displays what we've rendered and prepares for the next frame
+        // Clear the screen first
         renderer.clear();
 
         processInputs(window, deltaTime, &player1);
@@ -175,7 +213,8 @@ int main()
         }
         glGetError();
         
-
+        // Render UI last (on top of everything)
+        uiManager.render(renderer, uiShader);
 
         glfwSwapBuffers(window);
 
