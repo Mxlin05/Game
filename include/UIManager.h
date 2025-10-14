@@ -18,5 +18,5 @@ class UIManager {
         void addScreen(const std::string &name, std::unique_ptr<UIScreen> screen);
         void setCurrScreen(const std::string &name);
         void update(float deltaTime = 0);
-        void render(Render &renderer, Shader &shader);
+        void render(Render &renderer, Shader &shader, TextRenderer &textRenderer);
 };

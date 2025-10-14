@@ -25,8 +25,8 @@ void UIManager::update(float deltaTime){
     }
 }
 
-void UIManager::render(Render &renderer, Shader &shader){
+void UIManager::render(Render &renderer, Shader &shader, TextRenderer &textRenderer){
     if(currScreen != nullptr){
-        currScreen -> render(renderer, shader);
+        currScreen -> render(renderer, shader, textRenderer);
     }
 }

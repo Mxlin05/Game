@@ -2,6 +2,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <GLFW/glfw3.h>
+#include "TextRender.h"
 #include <iostream>
 
 StartMenuScreen::StartMenuScreen(int windowWidth, int windowHeight) : windowWidth(windowWidth), windowHeight(windowHeight) {
@@ -17,7 +18,7 @@ StartMenuScreen::StartMenuScreen(int windowWidth, int windowHeight) : windowWidt
 
 StartMenuScreen::~StartMenuScreen() {}
 
-void StartMenuScreen::render(Render &renderer, Shader &shader) {
+void StartMenuScreen::render(Render &renderer, Shader &shader, TextRenderer &textRenderer) {
     // std::cout << "Render is called" << std::endl;
     if (!active) return;
     
@@ -26,6 +27,8 @@ void StartMenuScreen::render(Render &renderer, Shader &shader) {
     
     // 2. Render button background
     renderButton(renderer, shader);
+
+    renderText(renderer, shader, textRenderer);
 }
 
 void StartMenuScreen::update(float deltaTime) {
@@ -75,8 +78,8 @@ void StartMenuScreen::renderOverlay(Render &renderer, Shader &shader) {
     shader.setUniformMat4f("uView", glm::value_ptr(view));
     shader.setUniformMat4f("uProjection", glm::value_ptr(projection));
     
-    // Set overlay color (semi-transparent white)
-    shader.setUniform4f("uColor", 1.0f, 1.0f, 1.0f, 0.8f);
+    // Set overlay color (semi-transparent black)
+    shader.setUniform4f("uColor", 0.0f, 0.0f, 0.0f, 0.8f);
     
     // Render full-screen quad
     renderer.Draw(renderer.vao, renderer.ib, shader);
@@ -99,11 +102,25 @@ void StartMenuScreen::renderButton(Render &renderer, Shader &shader) {
     shader.setUniformMat4f("uView", glm::value_ptr(view));
     shader.setUniformMat4f("uProjection", glm::value_ptr(projection));
     
-    // Button background (red)
-    shader.setUniform4f("uColor", 1.0f, 0.0f, 0.0f, 1.0f);
+    // Button background (white)
+    shader.setUniform4f("uColor", 1.0f, 1.0f, 1.0f, 1.0f);
     
     // Render button background
     renderer.Draw(renderer.vao, renderer.ib, shader);
+}
+
+void StartMenuScreen::renderText(Render &renderer, Shader &shader, TextRenderer &textRenderer) {
+    // Set up projection matrix for text rendering (screen space)
+    glm::mat4 projection = glm::ortho(0.0f, (float)windowWidth, 0.0f, (float)windowHeight);
+    
+    // Calculate text position to center it in the button more precisely
+    float textWidth = buttonText.length() * 6.0f * 0.5f; // Estimate text width (chars * char_width * scale)
+    float textHeight = 12.0f * 0.5f; // Estimate text height (font_height * scale)
+    float textX = buttonX + (buttonWidth / 2.0f) - (textWidth / 2.0f); // Perfect horizontal centering
+    float textY = buttonY + (buttonHeight / 2.0f) + (textHeight / 2.0f); // Perfect vertical centering
+    
+    // Render "Play Game" text in the button with smaller scale
+    textRenderer.RenderText(buttonText, textX, textY, 0.5f, glm::vec3(0.0f, 0.0f, 0.0f), projection); // Black text, smaller scale
 }
 
 // Text rendering removed - just showing button without text for now

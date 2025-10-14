@@ -4,7 +4,7 @@
 #include <iostream>     // For console output (cout, endl)
 #include <glad/glad.h>  // OpenGL function loader (loads OpenGL functions at runtime)
 #include <GLFW/glfw3.h> // Window management library (creates windows, handles input)
-#include "input.h"
+#include "Input.h"
 #include "shader.h"
 #include "Render.h"
 #include "Texture.h"
@@ -14,10 +14,11 @@
 #include "TileMap.h"
 #include "Player.h"
 #include "Enemy.h"
-#include "PathFind.h"
+#include "Pathfind.h"
 #include "UIManager.h"
 #include "UIScreen.h"
-#include "StartMenuScreen.h"
+#include "startMenuScreen.h"
+#include "TextRender.h"
 #include <chrono>
 
 // Declare these outside your game loop (e.g., as member variables)
@@ -153,6 +154,7 @@ int main()
     // Keep the window open until the user closes it
     Shader test("res/shaders/basicTest.glsl");
     Shader uiShader("res/shaders/ui.glsl");
+    Shader textShader("res/shaders/text.glsl");
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -179,6 +181,10 @@ int main()
     glfwGetWindowSize(window, &windowWidth, &windowHeight);
     Camera camera(windowWidth, windowHeight);
     
+    // Initialize textRenderer with text shader
+    TextRenderer textRenderer(textShader);
+    textRenderer.Load("res/arial.ttf", 48);  // Bigger font size, correct path
+
     // Initialize UI system
     UIManager uiManager;
     uiManager.addScreen("StartMenu", std::make_unique<StartMenuScreen>(windowWidth, windowHeight));
@@ -214,7 +220,10 @@ int main()
         glGetError();
         
         // Render UI last (on top of everything)
-        uiManager.render(renderer, uiShader);
+        uiManager.render(renderer, uiShader, textRenderer);
+        
+        // Render test text in big red letters
+        // textRenderer.RenderText("Hello World!", 50, windowHeight - 50, 2.0f, glm::vec3(1.0f, 0.0f, 0.0f));
 
         glfwSwapBuffers(window);
 

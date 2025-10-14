@@ -1,5 +1,7 @@
 #include "TextRender.h"
 #include <iostream>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 TextRenderer::TextRenderer(const Shader &shader)
     : textShader(shader)
@@ -75,16 +77,71 @@ void TextRenderer::Load(const std::string font, unsigned int fontSize) {
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), nullptr);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
+#endif // FREETYPE_AVAILABLE
 }
 
 void TextRenderer::RenderText(const std::string text, float x, float y, float scale, glm::vec3 color) {
+    std::cout << "RenderText is called" << std::endl;
     textShader.use();
     textShader.setUniformVec3("textColor", color);
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(VAO);
 
     for (auto c : text) {
-        Character ch = Characters[c];
+        // Check if character exists in the map
+        auto it = Characters.find(c);
+        if (it == Characters.end()) {
+            std::cerr << "ERROR::TEXT: Character '" << c << "' not loaded" << std::endl;
+            continue;
+        }
+        Character ch = it->second;
+
+        float xpos = x + ch.bearing.x * scale;
+        float ypos = y - (ch.size.y - ch.bearing.y) * scale;
+
+        float w = ch.size.x * scale;
+        float h = ch.size.y * scale;
+
+        float vertices[6][4] = {
+            { xpos,     ypos + h,   0.0f, 0.0f },
+            { xpos,     ypos,       0.0f, 1.0f },
+            { xpos + w, ypos,       1.0f, 1.0f },
+
+            { xpos,     ypos + h,   0.0f, 0.0f },
+            { xpos + w, ypos,       1.0f, 1.0f },
+            { xpos + w, ypos + h,   1.0f, 0.0f }
+        };
+
+        glBindTexture(GL_TEXTURE_2D, ch.textureID);
+
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        x += (ch.advance >> 6) * scale;  // Bitshift by 6 to convert 1/64th pixels to pixels
+    }
+
+    glBindVertexArray(0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+void TextRenderer::RenderText(const std::string text, float x, float y, float scale, glm::vec3 color, glm::mat4 projection) {
+    // std::cout << "RenderText with projection is called" << std::endl;
+    
+    textShader.use();
+    textShader.setUniformMat4f("projection", glm::value_ptr(projection));
+    textShader.setUniformVec3("textColor", color);
+    glActiveTexture(GL_TEXTURE0);
+    glBindVertexArray(VAO);
+
+    for (auto c : text) {
+        // Check if character exists in the map
+        auto it = Characters.find(c);
+        if (it == Characters.end()) {
+            std::cerr << "ERROR::TEXT: Character '" << c << "' not loaded" << std::endl;
+            continue;
+        }
+        Character ch = it->second;
 
         float xpos = x + ch.bearing.x * scale;
         float ypos = y - (ch.size.y - ch.bearing.y) * scale;

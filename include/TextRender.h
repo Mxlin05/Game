@@ -1,6 +1,7 @@
+#pragma once
+
 #include <map>
 #include <glm/glm.hpp>
-
 #include <string>
 #include <glad/glad.h> // Include GLAD to get OpenGL headers
 #include "Shader.h"
@@ -23,4 +24,5 @@ public:
     TextRenderer(const Shader& shader);
     void Load(std::string font, unsigned int fontSize);
     void RenderText(std::string text, float x, float y, float scale, glm::vec3 color);
+    void RenderText(std::string text, float x, float y, float scale, glm::vec3 color, glm::mat4 projection);
 };

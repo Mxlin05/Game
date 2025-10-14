@@ -1,6 +1,7 @@
 #pragma once
 #include "Render.h"
 #include "Shader.h"
+#include "TextRender.h"
 
 class UIScreen{
     public:
@@ -8,7 +9,7 @@ class UIScreen{
         UIScreen();
 
         virtual void update(float deltaTime = 0);
-        virtual void render(Render &renderer, Shader &shader);
+        virtual void render(Render &renderer, Shader &shader, TextRenderer &textRenderer);
         virtual ~UIScreen();
         virtual void init();
         virtual void onKeyPress(int key);

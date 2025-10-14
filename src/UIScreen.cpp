@@ -10,7 +10,7 @@ void UIScreen::update(float deltaTime) {
     // Default empty implementation
 }
 
-void UIScreen::render(Render &renderer, Shader &shader) {
+void UIScreen::render(Render &renderer, Shader &shader, TextRenderer &textRenderer) {
     // Default empty implementation
 }
 
