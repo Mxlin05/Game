@@ -113,14 +113,30 @@ void StartMenuScreen::renderText(Render &renderer, Shader &shader, TextRenderer 
     // Set up projection matrix for text rendering (screen space)
     glm::mat4 projection = glm::ortho(0.0f, (float)windowWidth, 0.0f, (float)windowHeight);
     
-    // Calculate text position to center it in the button more precisely
-    float textWidth = buttonText.length() * 6.0f * 0.5f; // Estimate text width (chars * char_width * scale)
-    float textHeight = 12.0f * 0.5f; // Estimate text height (font_height * scale)
-    float textX = buttonX + (buttonWidth / 2.0f) - (textWidth / 2.0f); // Perfect horizontal centering
-    float textY = buttonY + (buttonHeight / 2.0f) + (textHeight / 2.0f); // Perfect vertical centering
+    float scale = 0.5f;
     
-    // Render "Play Game" text in the button with smaller scale
-    textRenderer.RenderText(buttonText, textX, textY, 0.5f, glm::vec3(0.0f, 0.0f, 0.0f), projection); // Black text, smaller scale
+    // Calculate actual text width using character metrics
+    float textWidth = 0.0f;
+    float maxTextHeight = 0.0f;
+    
+    for (char c : buttonText) {
+        auto it = textRenderer.Characters.find(c);
+        if (it != textRenderer.Characters.end()) {
+            const Character& ch = it->second;
+            textWidth += (ch.advance >> 6) * scale; // Convert 1/64th pixels to pixels
+            maxTextHeight = std::max(maxTextHeight, (float)ch.size.y * scale);
+        }
+    }
+    
+    // Center the text horizontally within the button
+    float textX = buttonX + (buttonWidth / 2.0f) - (textWidth / 2.0f);
+    
+    // Center the text vertically within the button
+    // Note: TextRenderer uses baseline coordinates, so we need to account for text height and bearing
+    float textY = buttonY + (buttonHeight / 2.0f);
+    
+    // Render "Play Game" text in the button
+    textRenderer.RenderText(buttonText, textX, textY, scale, glm::vec3(0.0f, 0.0f, 0.0f), projection);
 }
 
 // Text rendering removed - just showing button without text for now
