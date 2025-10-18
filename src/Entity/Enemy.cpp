@@ -103,14 +103,14 @@ void Enemy::followPath(float deltaTime) {
     float dist = glm::length(direction);
 
     //std::cout << "Distance to waypoint: " << dist << std::endl;
-    printPath(path);
+    // printPath(path);
     if (dist < 1.0f) {
         pathIndex++;
         std::cout << "Advancing to waypoint index: " << pathIndex << std::endl;
     } else {
         direction = glm::normalize(direction);
         position += direction * speed * deltaTime;
-        std::cout << "Moving to: " << position.x << ", " << position.y << std::endl;
+        // std::cout << "Moving to: " << position.x << ", " << position.y << std::endl;
     }
 }
 
@@ -122,4 +122,24 @@ glm::ivec2 Enemy::worldToTile(const glm::vec2& pos, float tileSize) {
 
 glm::vec2 Enemy::tileToWorld(const glm::ivec2& tile, float tileSize) {
     return glm::vec2(tile.x * tileSize + tileSize / 2, tile.y * tileSize + tileSize / 2);
+}
+
+void Enemy::updateHealth(int h){
+    stats.health = h;
+}
+
+void Enemy::updateArmor(int a){
+    stats.armor = a;
+}
+
+void Enemy::updateBattleSpeed(int b){
+    stats.battleSpeed = b;
+}
+
+void Enemy::updatePhysicalAttack(int a){
+    stats.physAttack = a;
+}
+
+void Enemy::updateMagicAttack(int a){
+    stats.magicAttack = a;
 }

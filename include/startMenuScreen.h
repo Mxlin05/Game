@@ -6,7 +6,6 @@
 #include "TextRender.h"
 
 class StartMenuScreen : public UIScreen{
-    bool active;
     int windowWidth, windowHeight;
 
     public:

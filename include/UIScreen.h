@@ -8,6 +8,8 @@ class UIScreen{
 
         UIScreen();
 
+        bool active = false;
+
         virtual void update(float deltaTime = 0);
         virtual void render(Render &renderer, Shader &shader, TextRenderer &textRenderer);
         virtual ~UIScreen();
