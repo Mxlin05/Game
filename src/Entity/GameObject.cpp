@@ -1,6 +1,9 @@
 #include "GameObject.h"
 #include <iostream>
 #include "Physics.h"
+
+// Initialize the static member variable
+std::map<const AABB, std::string> GameObject::enemyType;
 GameObject::GameObject(Sprite *sprite, glm::vec2 position, glm::vec2 size, glm::vec2 rotation) 
     : sprite(sprite), position(position), size(size), rotation(rotation) {
     Physics::addAABB(Physics::createAABB(position, size));
@@ -30,3 +33,20 @@ glm::vec2 GameObject::getPosition() const {
 glm::vec2 GameObject::getSize() const {
     return size;
 }
+
+void GameObject::registerObjectType(const std::string& type) {
+    if (aabbID >= 0) {
+        AABB myAABB = Physics::getAABB_byID(aabbID);
+        enemyType[myAABB] = type;
+    }
+}
+
+std::string GameObject::getObjectType() const {
+    AABB myAABB = Physics::getAABB_byID(aabbID);
+    auto it = enemyType.find(myAABB);
+    if (it != enemyType.end()) {
+        return it->second;
+    }
+    return "unknown"; // Return "unknown" if not found
+}
+

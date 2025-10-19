@@ -4,6 +4,7 @@
 Enemy::Enemy(Sprite *sprite, glm::vec2 position, glm::vec2 size, glm::vec2 rotation, glm::vec2 patrolStart, glm::vec2 patrolEnd, float speed, float detectionRange) 
     : GameObject(sprite, position, size, rotation), patrolStart(patrolStart), patrolEnd(patrolEnd), speed(speed), dectectionRange(detectionRange) {
     state = AIState::Idle;
+    registerObjectType("enemy");
 }
 
 Enemy::~Enemy() {

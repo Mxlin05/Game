@@ -1,6 +1,7 @@
 #pragma once
 #include "Sprite.h"
 #include "Physics.h"
+#include <map>
 
 class Stats {
     public:
@@ -19,6 +20,9 @@ class GameObject{
         glm::vec2 size;
         glm::vec2 rotation;
         size_t aabbID;
+        
+        // Static global map for all object types
+        static std::map<const AABB, std::string> enemyType; 
         //need to add more abouot physics, anminations and more
 
 
@@ -31,7 +35,10 @@ class GameObject{
         
         virtual void setPosition(const glm::vec2& position);
         virtual void setSize(const glm::vec2& size);
-
+        virtual void registerObjectType(const std::string& type);
+        virtual std::string getObjectType() const;
+        
         glm::vec2 getPosition() const;
         glm::vec2 getSize() const;
+
 };

@@ -31,6 +31,14 @@ bool AABB::operator==(const AABB& other) const{
     return min == other.min && max == other.max;
 }
 
+bool AABB::operator<(const AABB& other) const{
+    // Compare by ID first, then by position if IDs are equal
+    if (id != other.id) {
+        return id < other.id;
+    }
+    return false;
+}
+
 
 //physics functions 
 //Create AABB

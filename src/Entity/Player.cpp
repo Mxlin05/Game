@@ -1,8 +1,11 @@
 #include "Player.h"
 #include "Physics.h"
+#include "Global.h"
+#include "UIManager.h"
 
 Player::Player(Sprite *sprite, glm::vec2 position, glm::vec2 size, glm::vec2 rotation)
     : GameObject(sprite, position, size, rotation), velocity(10.0f, 10.0f), speed(50.0f) {
+    registerObjectType("player");
 }
 
 Player::~Player() {
@@ -30,9 +33,34 @@ void Player::update(const glm::vec2 &move){
             continue;   
         }
         if (Physics::aabbOverlap(Physics::getAABB_byID(aabbID), Physics::getAABB_byID(i))){
-            //std::cout << "collision detected" << std::endl;
+            // Check collision type BEFORE reverting position
+            AABB collidingAABB = Physics::getAABB_byID(i);
+            auto it = enemyType.find(collidingAABB);
+            
             position = old;
             updateAABB();
+            
+            if (it != enemyType.end()) {
+                if (it->second == "enemy") {
+                    std::cout << "Player collided with enemy!" << std::endl;
+                    // Switch to battle screen
+                    g_uiManager.setCurrScreen("Battle");
+                    std::cout << "Attempted to switch to Battle screen" << std::endl;
+                }
+                else if (it->second == "npc") {
+                    std::cout << "Player collided with NPC!" << std::endl;
+                    // Add your NPC interaction logic here
+                }
+                else {
+                    std::cout << "Player collided with: " << it->second << std::endl;
+                }
+            }
+            else {
+                std::cout << "Player collided with unknown object" << std::endl;
+            }
+            
+            //std::cout << "collision detected" << std::endl;
+            
             break;
         }
     }

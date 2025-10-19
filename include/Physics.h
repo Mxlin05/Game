@@ -15,6 +15,7 @@ class AABB{
         ~AABB();
 
         bool operator==(const AABB& other) const;
+        bool operator<(const AABB& other) const;
 
         void setMin(glm::vec2 min);
         void setMax(glm::vec2 max);

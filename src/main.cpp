@@ -14,10 +14,13 @@
 #include "TileMap.h"
 #include "Player.h"
 #include "Enemy.h"
+#include "Npc.h"
 #include "Pathfind.h"
 #include "UIManager.h"
 #include "UIScreen.h"
 #include "startMenuScreen.h"
+#include "battleUI.h"
+#include "Global.h"
 #include "TextRender.h"
 #include <chrono>
 
@@ -47,8 +50,9 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     glViewport(0, 0, width, height);
 }
 
-// Global UI manager for input callbacks
-UIManager* g_uiManager = nullptr;
+// Global UI manager for input callbacks and screen switching
+UIManager g_uiManager;
+UIManager* g_uiManager_ptr = &g_uiManager;
 
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
@@ -56,8 +60,8 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
         double xpos, ypos;
         glfwGetCursorPos(window, &xpos, &ypos);
         
-        if (g_uiManager && g_uiManager->currScreen) {
-            g_uiManager->currScreen->onMouseClick(xpos, ypos);
+        if (g_uiManager_ptr && g_uiManager_ptr->currScreen) {
+            g_uiManager_ptr->currScreen->onMouseClick(xpos, ypos);
         }
     }
 }
@@ -65,8 +69,8 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     if (action == GLFW_PRESS) {
-        if (g_uiManager && g_uiManager->currScreen) {
-            g_uiManager->currScreen->onKeyPress(key);
+        if (g_uiManager_ptr && g_uiManager_ptr->currScreen) {
+            g_uiManager_ptr->currScreen->onKeyPress(key);
         }
     }
 }
@@ -167,7 +171,8 @@ int main()
     Sprite sprite2(&texture2, &test, &renderer);
 
     Player player1(&sprite2, glm::vec2(0.0f, 0.0f), glm::vec2(100.0f, 100.0f), glm::vec2(0.0f));
-    Enemy obj2(&sprite1, glm::vec2(150.0f, 300.0f), glm::vec2(100.0f, 100.0f), glm::vec2(0.0f),  glm::vec2(150.0f, 300.0f), glm::vec2(400.0f), 50.0f, 300.0f); 
+    Enemy obj2(&sprite1, glm::vec2(150.0f, 300.0f), glm::vec2(100.0f, 100.0f), glm::vec2(0.0f),  glm::vec2(150.0f, 300.0f), glm::vec2(400.0f), 50.0f, 300.0f);
+    Npc npc1(&sprite1, glm::vec2(300.0f, 200.0f), glm::vec2(80.0f, 80.0f), glm::vec2(0.0f)); 
 
     TileMap tileMap("res/tilemap.csv");
     std::vector<int> walkGrid = tileMap.GenerateWalkabilityGrid();
@@ -176,6 +181,19 @@ int main()
     obj2.pathFinder = &pathFinder;
     Scene scene(&player1, &tileMap);
     scene.addEnemy(&obj2);
+    
+    // Test object type mapping - COMMENTED OUT (working correctly)
+    // std::cout << "=== Object Type Mapping Test ===" << std::endl;
+    // std::cout << "Player type: " << player1.getObjectType() << std::endl;
+    // std::cout << "Enemy type: " << obj2.getObjectType() << std::endl;
+    // std::cout << "NPC type: " << npc1.getObjectType() << std::endl;
+    
+    // Print all objects in the global map
+    // std::cout << "All registered objects:" << std::endl;
+    // for (const auto& pair : GameObject::enemyType) {
+    //     std::cout << "AABB ID: " << pair.first.id << " -> Type: " << pair.second << std::endl;
+    // }
+    // std::cout << "=== End Test ===" << std::endl;
     
     int windowWidth, windowHeight;
     glfwGetWindowSize(window, &windowWidth, &windowHeight);
@@ -186,12 +204,9 @@ int main()
     textRenderer.Load("res/arial.ttf", 48);  // Bigger font size, correct path
 
     // Initialize UI system
-    UIManager uiManager;
-    uiManager.addScreen("StartMenu", std::make_unique<StartMenuScreen>(windowWidth, windowHeight));
-    uiManager.setCurrScreen("StartMenu");
-    
-    // Set global UI manager for input callbacks
-    g_uiManager = &uiManager;
+    g_uiManager.addScreen("StartMenu", std::make_unique<StartMenuScreen>(windowWidth, windowHeight));
+    g_uiManager.addScreen("Battle", std::make_unique<BattleUI>(windowWidth, windowHeight));
+    g_uiManager.setCurrScreen("StartMenu");
     
     float lastTime = glfwGetTime();
     while(!glfwWindowShouldClose(window))
@@ -202,8 +217,8 @@ int main()
         renderer.clear();
 
         //needs to make sure it cannot move if on a screen        
-        if(g_uiManager->currScreen->active == false){
-            //std::cout << g_uiManager->currScreen->active << std::endl;
+        if(g_uiManager_ptr->currScreen->active == false){
+            //std::cout << g_uiManager_ptr->currScreen->active << std::endl;
             processInputs(window, deltaTime, &player1);
         }
 
@@ -225,7 +240,7 @@ int main()
         glGetError();
         
         // Render UI last (on top of everything)
-        uiManager.render(renderer, uiShader, textRenderer);
+        g_uiManager.render(renderer, uiShader, textRenderer);
         
         // Render test text in big red letters
         // textRenderer.RenderText("Hello World!", 50, windowHeight - 50, 2.0f, glm::vec3(1.0f, 0.0f, 0.0f));

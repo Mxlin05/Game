@@ -3,7 +3,7 @@
 Npc::Npc(Sprite *sprite, glm::vec2 position, glm::vec2 size, glm::vec2 rotation) 
 : GameObject(sprite, position, size, rotation), speed(1.0f) 
 {
-
+    registerObjectType("npc");
 }
 
 Npc::~Npc() {
