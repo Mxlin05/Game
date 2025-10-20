@@ -9,7 +9,9 @@
 #include "TextAlignment.h"
 #include <iostream>
 
-BattleUI::BattleUI(int windowWidth, int windowHeight) : windowWidth(windowWidth), windowHeight(windowHeight) {
+BattleUI::BattleUI(int windowWidth, int windowHeight, std::vector<Player *> players, std::vector<Enemy *> enemies)
+    : windowWidth(windowWidth), windowHeight(windowHeight), manager(players, enemies) {    
+
     active = true;
     tileMaps["generic_battle_map"] = new TileMap("res/battle_tilemap.csv");
     tileMapShader = new Shader("res/shaders/basicTest.glsl");
@@ -117,6 +119,8 @@ void BattleUI::update(float deltaTime) {
 
 void BattleUI::init() {
     createButtons();
+
+    manager.startBattle();
 }
 
 void BattleUI::renderMap(Render &renderer, Shader &shader) {
@@ -246,6 +250,7 @@ bool BattleUI::isPointInButton(double x, double y) {
     for (auto &button : buttons) {
         if (button.isInside(x, y, false) && button.onClick){
             button.onClick();
+            manager.nextTurn();
             return true;
         }
     }

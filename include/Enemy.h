@@ -38,6 +38,7 @@ class Enemy : public GameObject {
 
         void updateHealth(int h);
         void updateArmor(int a);
+        void updateMagicArmor(int a);
         void updateBattleSpeed(int b);
         void updatePhysicalAttack(int a);
         void updateMagicAttack(int a);

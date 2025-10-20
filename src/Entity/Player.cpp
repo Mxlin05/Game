@@ -7,7 +7,8 @@ Player::Player(Sprite *sprite, glm::vec2 position, glm::vec2 size, glm::vec2 rot
     : GameObject(sprite, position, size, rotation), velocity(10.0f, 10.0f), speed(50.0f) {
     registerObjectType("player");
     updateHealth(100);
-    updateArmor(10);
+    updatePhysicalArmor(10);
+    updateMagicArmor(10);
     updateBattleSpeed(10);
     updatePhysicalAttack(10);
     updateMagicAttack(10);
@@ -87,8 +88,12 @@ void Player::updateHealth(int h){
     stats.health = h;
 }
 
-void Player::updateArmor(int a){
+void Player::updatePhysicalArmor(int a){
     stats.armor = a;
+}
+
+void Player::updateMagicArmor(int a){
+    stats.magicArmor = a;
 }
 
 void Player::updateBattleSpeed(int b){
@@ -101,4 +106,12 @@ void Player::updatePhysicalAttack(int a){
 
 void Player::updateMagicAttack(int a){
     stats.magicAttack = a;
+}
+
+void Player::learnMove(const Move& move) {
+    Moves.push_back(move);
+}
+
+void Player::useMove(int index){
+
 }

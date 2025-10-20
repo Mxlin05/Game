@@ -5,6 +5,7 @@
 #include "TextRender.h"
 #include "Button.h"
 #include <vector>
+#include "BattleManager.h"
 
 
 enum class BattleState {
@@ -21,7 +22,7 @@ class BattleUI : public UIScreen{
     std::unordered_map<std::string, TileMap*> tileMaps;
     Shader *tileMapShader;
     public: 
-        BattleUI(int windowWidth, int windowHeight);
+        BattleUI(int windowWidth, int windowHeight, std::vector<Player *> players = {}, std::vector<Enemy *> enemies = {});
         ~BattleUI();
 
         void update(float deltaTime) override;
@@ -37,6 +38,7 @@ class BattleUI : public UIScreen{
         // Button properties
 
         BattleState currentState = BattleState::MAIN;
+        BattleManager manager;
 
         float statsWidth, statsHeight, statsX, statsY, playerX, playerY, playerWidth, playerHeight;
         std::string statsText1, statsText2, statsText3, statsText4, statsText5;

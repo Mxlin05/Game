@@ -8,6 +8,7 @@ class Stats {
         //add stats
         int health;
         int armor;
+        int magicArmor;
         int battleSpeed;
         int physAttack;
         int magicAttack;
