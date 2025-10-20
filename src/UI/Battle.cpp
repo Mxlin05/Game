@@ -11,7 +11,8 @@
 
 BattleUI::BattleUI(int windowWidth, int windowHeight) : windowWidth(windowWidth), windowHeight(windowHeight) {
     active = true;
-    
+    firstMap = new TileMap("res/tilemap.csv");
+    tileMapShader = new Shader("res/shaders/basicTest.glsl");
     // Set button properties - center the button on screen
     buttonWidth = 100.0f;
     buttonHeight = 30.0f;
@@ -43,13 +44,16 @@ BattleUI::BattleUI(int windowWidth, int windowHeight) : windowWidth(windowWidth)
     statsText5 = "Magic Attack: " + std::to_string(g_player->stats.magicAttack);
 }
 
-BattleUI::~BattleUI() {}
+BattleUI::~BattleUI() {
+    if (firstMap) delete firstMap;
+    if (tileMapShader) delete tileMapShader;
+}
 
 void BattleUI::render(Render &renderer, Shader &shader, TextRenderer &textRenderer) {
     if (!active) return;
     
     // 1. Render red overlay (semi-transparent background for battle)
-    renderOverlay(renderer, shader);
+    renderMap(renderer, shader);
     
     // 2. Render button background
     renderButton(renderer, shader, textRenderer, buttonX_topl, buttonY_topl, buttonText1);
@@ -86,13 +90,13 @@ void BattleUI::onMouseClick(double x, double y) {
     bool clickedOnButton = isPointInButton(x, openGLY);
 }
 
-void BattleUI::renderOverlay(Render &renderer, Shader &shader) {
-    // Set up projection matrix for UI rendering (screen space)
+void BattleUI::renderMap(Render &renderer, Shader &shader) {
+    // Set up projection matrix for full screen coverage
     glm::mat4 projection = glm::ortho(0.0f, (float)windowWidth, 0.0f, (float)windowHeight);
     glm::mat4 view = glm::mat4(1.0f);
     glm::mat4 model = glm::mat4(1.0f);
     
-    // Scale to full screen
+    // 1. Render full-screen black overlay
     model = glm::scale(model, glm::vec3(windowWidth, windowHeight, 1.0f));
     model = glm::translate(model, glm::vec3(0.5f, 0.5f, 0.0f));
     
@@ -100,12 +104,46 @@ void BattleUI::renderOverlay(Render &renderer, Shader &shader) {
     shader.setUniformMat4f("uModel", glm::value_ptr(model));
     shader.setUniformMat4f("uView", glm::value_ptr(view));
     shader.setUniformMat4f("uProjection", glm::value_ptr(projection));
+    shader.setUniform4f("uColor", 0.0f, 0.0f, 0.0f, 1.0f);
     
-    // Set overlay color (semi-transparent red for battle)
-    shader.setUniform4f("uColor", 0.0f, 0.0f, 0.0f, 0.8f);
-    
-    // Render full-screen quad
     renderer.Draw(renderer.vao, renderer.ib, shader);
+    
+    // 2. Render 70% overlay from the top
+    float overlayHeight = windowHeight * 0.7f;
+    float overlayY = windowHeight - overlayHeight; // Start from top, go down 70%
+    
+    // Debug output
+    std::cout << "Debug - windowHeight: " << windowHeight << std::endl;
+    std::cout << "Debug - overlayHeight: " << overlayHeight << std::endl;
+    std::cout << "Debug - overlayY: " << overlayY << std::endl;
+    
+    model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(0.0f, overlayY, 0.0f));
+    model = glm::scale(model, glm::vec3(windowWidth, overlayHeight, 1.0f));
+    model = glm::translate(model, glm::vec3(0.5f, 0.5f, 0.0f));
+    
+    shader.setUniformMat4f("uModel", glm::value_ptr(model));
+    shader.setUniform4f("uColor", 0.2f, 0.2f, 0.2f, 0.8f); // Dark gray semi-transparent
+    
+    renderer.Draw(renderer.vao, renderer.ib, shader);
+    
+    // 3. Draw the tile map in the 70% area
+    if (firstMap && tileMapShader) {
+        // std::cout << "render map" << std::endl;
+        
+        // Use full screen projection matrix and rely on startX/startY parameters
+        glm::mat4 tileProjection = glm::ortho(0.0f, (float)windowWidth, 0.0f, (float)windowHeight);
+        
+        // Use the tile map shader for texture atlas support
+        tileMapShader->use();
+        tileMapShader->setUniformMat4f("uProjection", glm::value_ptr(tileProjection));
+        tileMapShader->setUniformMat4f("uView", glm::value_ptr(view));
+        
+        // Draw the tile map in the 70% area
+        // Start drawing from the bottom of the 70% area (overlayY)
+        std::cout << "Debug - Drawing tile map at startX: 0, startY: " << (int)overlayY << std::endl;
+        firstMap->draw(renderer, *tileMapShader, windowWidth, (int)overlayHeight, 16, 0, (int)overlayY);
+    }
 }
 
 void BattleUI::renderButton(Render &renderer, Shader &shader, TextRenderer &textRenderer, float buttonX, float buttonY, std::string buttonText) {

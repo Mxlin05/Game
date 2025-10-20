@@ -3,9 +3,12 @@
 #include "Render.h"
 #include "Shader.h"
 #include "TextRender.h"
+#include "TileMap.h"
 
 class BattleUI : public UIScreen{
     int windowWidth, windowHeight;
+    TileMap *firstMap;
+    Shader *tileMapShader;
     public: 
         BattleUI(int windowWidth, int windowHeight);
         ~BattleUI();
@@ -26,7 +29,7 @@ class BattleUI : public UIScreen{
         std::string statsText1, statsText2, statsText3, statsText4, statsText5;
 
         // Helper methods
-        void renderOverlay(Render &renderer, Shader &shader);
+        void renderMap(Render &renderer, Shader &shader);
         void renderButton(Render &renderer, Shader &shader, TextRenderer &textRenderer, float buttonX, float buttonY, std::string buttonText);
         void renderStats(Render &renderer, Shader &shader, TextRenderer &textRenderer, float statsX, float statsY);
         void renderText(Render &renderer, Shader &shader, TextRenderer &textRenderer, float buttonX, float buttonY, std::string buttonText, float scale);

@@ -18,7 +18,7 @@ class Scene {
         Scene(Player *player, TileMap *tileMap);
         ~Scene();
 
-        void draw(Render *renderer, Shader *shader, int windowWidth, int windowHeight) const;
+        void draw(Render *renderer, Shader *shader, int windowWidth, int windowHeight, int tileSize) const;
         void addEnemy(Enemy *enemy);
         void addObjects(GameObject *object);
 };
