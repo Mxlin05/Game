@@ -13,9 +13,13 @@ enum class BattleState {
     MAGIC,
     ITEM
 };
+#include "TileMap.h"
+#include "unordered_map"
 
 class BattleUI : public UIScreen{
     int windowWidth, windowHeight;
+    std::unordered_map<std::string, TileMap*> tileMaps;
+    Shader *tileMapShader;
     public: 
         BattleUI(int windowWidth, int windowHeight);
         ~BattleUI();
@@ -45,7 +49,7 @@ class BattleUI : public UIScreen{
 
 
         void renderText(Render &renderer, Shader &shader, TextRenderer &textRenderer, float buttonX, float buttonY, std::string buttonText, float scale);
-        void renderOverlay(Render &renderer, Shader &shader);
+        void renderMap(Render &renderer, Shader &shader);
         void renderStats(Render &renderer, Shader &shader, TextRenderer &textRenderer, float statsX, float statsY);
         void renderPlayer(Render &renderer, Shader &shader, TextRenderer &textRenderer, float playerX, float playerY, float playerWidth, float playerHeight);
         bool isPointInButton(double x, double y);

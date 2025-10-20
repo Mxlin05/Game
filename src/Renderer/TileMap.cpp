@@ -41,8 +41,7 @@ void TileMap::loadFromFile(const char *filePath) {
     }
 }
 
-void TileMap::draw(Render& renderer, Shader& shader, int windowWidth, int windowHeight) {
-    int tileSize = 32;
+void TileMap::draw(Render& renderer, Shader& shader, int windowWidth, int windowHeight, int tileSize, int startX, int startY) {
 
     atlas->texture->bind(0); 
 
@@ -52,7 +51,7 @@ void TileMap::draw(Render& renderer, Shader& shader, int windowWidth, int window
             if (tileType == -1) continue;
 
             glm::mat4 model = glm::mat4(1.0f);
-            model = glm::translate(model, glm::vec3(x * tileSize, y * tileSize, 0.0f));
+            model = glm::translate(model, glm::vec3(startX + x * tileSize, startY + y * tileSize, 0.0f));
             model = glm::scale(model, glm::vec3(tileSize, tileSize, 1.0f));
 
             const texcord& sub = atlas->get(tileType);

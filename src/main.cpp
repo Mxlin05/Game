@@ -236,7 +236,7 @@ int main()
         // glm::mat4 projection = glm::ortho(0.0f, (float)windowWidth, (float)windowHeight, 0.0f, -1.0f, 1.0f);
         test.setUniformMat4f("uView", glm::value_ptr(view));
         test.setUniformMat4f("uProjection", glm::value_ptr(projection));
-        scene.draw(&renderer, &test, windowWidth, windowHeight);
+        scene.draw(&renderer, &test, windowWidth, windowHeight, 32);
 
         for (auto& enemy : scene.Enemies) {
             enemy->update(deltaTime, player1.getPosition());

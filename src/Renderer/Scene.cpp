@@ -8,8 +8,8 @@ Scene::~Scene(){
     //will add as needed
 }
 
-void Scene::draw(Render *renderer, Shader *shader, int windowWidth, int windowHeight) const {
-    tileMap->draw(*renderer, *shader, windowWidth, windowHeight);
+void Scene::draw(Render *renderer, Shader *shader, int windowWidth, int windowHeight, int tileSize) const {
+    tileMap->draw(*renderer, *shader, windowWidth, windowHeight, tileSize, 0, 0);
     shader->setUniformVec2("uOffset", glm::vec2(0.0f, 0.0f));
     shader->setUniformVec2("uScale", glm::vec2(1.0f, 1.0f));
     player-> draw(windowWidth, windowHeight);

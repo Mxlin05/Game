@@ -15,7 +15,7 @@ class TileMap{
         int width, height;
         std::vector<std::vector<int>> map;
 
-        void draw(Render& renderer, Shader& shader, int windowWidth, int windowHeight);
+        void draw(Render& renderer, Shader& shader, int windowWidth, int windowHeight, int tileSize, int startX = 0, int startY = 0);
         std::vector<int> GenerateWalkabilityGrid();
 
         void printWalkabilityGrid(const std::vector<int>& grid, int width, int height) {
