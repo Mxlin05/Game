@@ -46,7 +46,6 @@ void BattleUI::render(Render &renderer, Shader &shader, TextRenderer &textRender
     
     // 1. Render red overlay (semi-transparent background for battle)
     renderMap(renderer, shader);
-    renderOverlay(renderer, shader);
     
     // 2. Render button background
     for (auto &button : buttons) {
