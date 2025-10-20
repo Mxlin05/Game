@@ -4,6 +4,7 @@
 #include <string>
 #include <functional>
 #include "TextRender.h"
+#include <ostream>
 
 
 class Button {
@@ -20,17 +21,23 @@ class Button {
 
         std::function<void()> onClick;
 
-        Button(float positionX, float positionY, int widthX, int widthY, float txtScale, std::string &label);
+        Button(float positionX, float positionY, int widthX, int widthY, float txtScale, const std::string &label);
 
         void render(Render &renderer, Shader &shader, TextRenderer &textRenderer, int windowWidth, int windowHeight);
         void update(double mouseX, double mouseY, bool mousePressed);
         bool isInside(double mouseX, double mouseY, bool mousePressed) const;
 
 
-        void init();
-
 
     private:
 
 
 };
+
+// Free function (non-member)
+inline std::ostream& operator<<(std::ostream &os, const Button &button) {
+    os << "Button(label=\"" << button.label 
+       << "\", pos=(" << button.positionx << ", " << button.positiony 
+       << "), size=(" << button.widthx << ", " << button.widthy << "))";
+    return os;
+}

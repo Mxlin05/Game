@@ -4,7 +4,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "TextAlignment.h"
 
-Button::Button(float x, float y, int wx, int wy, float textScale, std::string &label)
+Button::Button(float x, float y, int wx, int wy, float textScale, const std::string &label)
     : positionx(x), positiony(y), widthx(wx), widthy(wy), textScale(textScale), label(label)
     {
 
