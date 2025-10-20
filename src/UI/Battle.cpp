@@ -11,7 +11,7 @@
 
 BattleUI::BattleUI(int windowWidth, int windowHeight) : windowWidth(windowWidth), windowHeight(windowHeight) {
     active = true;
-    firstMap = new TileMap("res/tilemap.csv");
+    tileMaps["generic_battle_map"] = new TileMap("res/battle_tilemap.csv");
     tileMapShader = new Shader("res/shaders/basicTest.glsl");
     // Set button properties - center the button on screen
     buttonWidth = 100.0f;
@@ -45,7 +45,9 @@ BattleUI::BattleUI(int windowWidth, int windowHeight) : windowWidth(windowWidth)
 }
 
 BattleUI::~BattleUI() {
-    if (firstMap) delete firstMap;
+    for (auto &[key, map] : tileMaps) {
+        if (map) delete map;
+    }
     if (tileMapShader) delete tileMapShader;
 }
 
@@ -92,6 +94,7 @@ void BattleUI::onMouseClick(double x, double y) {
 
 void BattleUI::renderMap(Render &renderer, Shader &shader) {
     // Set up projection matrix for full screen coverage
+    TileMap* map = tileMaps["generic_battle_map"];
     glm::mat4 projection = glm::ortho(0.0f, (float)windowWidth, 0.0f, (float)windowHeight);
     glm::mat4 view = glm::mat4(1.0f);
     glm::mat4 model = glm::mat4(1.0f);
@@ -112,10 +115,10 @@ void BattleUI::renderMap(Render &renderer, Shader &shader) {
     float overlayHeight = windowHeight * 0.7f;
     float overlayY = windowHeight - overlayHeight; // Start from top, go down 70%
     
-    // Debug output
-    std::cout << "Debug - windowHeight: " << windowHeight << std::endl;
-    std::cout << "Debug - overlayHeight: " << overlayHeight << std::endl;
-    std::cout << "Debug - overlayY: " << overlayY << std::endl;
+    // // Debug output
+    // std::cout << "Debug - windowHeight: " << windowHeight << std::endl;
+    // std::cout << "Debug - overlayHeight: " << overlayHeight << std::endl;
+    // std::cout << "Debug - overlayY: " << overlayY << std::endl;
     
     model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(0.0f, overlayY, 0.0f));
@@ -128,7 +131,7 @@ void BattleUI::renderMap(Render &renderer, Shader &shader) {
     renderer.Draw(renderer.vao, renderer.ib, shader);
     
     // 3. Draw the tile map in the 70% area
-    if (firstMap && tileMapShader) {
+    if (map && tileMapShader) {
         // std::cout << "render map" << std::endl;
         
         // Use full screen projection matrix and rely on startX/startY parameters
@@ -141,8 +144,8 @@ void BattleUI::renderMap(Render &renderer, Shader &shader) {
         
         // Draw the tile map in the 70% area
         // Start drawing from the bottom of the 70% area (overlayY)
-        std::cout << "Debug - Drawing tile map at startX: 0, startY: " << (int)overlayY << std::endl;
-        firstMap->draw(renderer, *tileMapShader, windowWidth, (int)overlayHeight, 16, 0, (int)overlayY);
+        // std::cout << "Debug - Drawing tile map at startX: 0, startY: " << (int)overlayY << std::endl;
+        map->draw(renderer, *tileMapShader, windowWidth, (int)overlayHeight, 16, 0, (int)overlayY);
     }
 }
 

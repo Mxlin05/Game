@@ -4,10 +4,11 @@
 #include "Shader.h"
 #include "TextRender.h"
 #include "TileMap.h"
+#include "unordered_map"
 
 class BattleUI : public UIScreen{
     int windowWidth, windowHeight;
-    TileMap *firstMap;
+    std::unordered_map<std::string, TileMap*> tileMaps;
     Shader *tileMapShader;
     public: 
         BattleUI(int windowWidth, int windowHeight);
