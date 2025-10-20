@@ -83,11 +83,7 @@ void BattleUI::onMouseClick(double x, double y) {
     
     // Convert GLFW coordinates (top-left origin) to OpenGL coordinates (bottom-left origin)
     double openGLY = windowHeight - y;
-    
-    if (isPointInButton(x, openGLY)) {
-        std::cout << "Mouse clicked on end battle button" << std::endl;
-        g_uiManager.setCurrScreen("StartMenu"); // Return to game
-    }
+    bool clickedOnButton = isPointInButton(x, openGLY);
 }
 
 void BattleUI::renderOverlay(Render &renderer, Shader &shader) {
@@ -157,7 +153,7 @@ void BattleUI::renderButton(Render &renderer, Shader &shader, TextRenderer &text
     // std::cout << "========================" << std::endl;
     
     auto [alignedX, alignedY] = ALIGN_MIDDLE_CENTER(buttonX - 15.0f, buttonY, buttonWidth, buttonHeight, buttonText, scale);
-    std::cout << "Macro result with half text: X=" << alignedX << ", Y=" << alignedY << std::endl;
+    // std::cout << "Macro result with half text: X=" << alignedX << ", Y=" << alignedY << std::endl;
     
     renderText(renderer, shader, textRenderer, alignedX, alignedY, buttonText, scale);
 }
@@ -212,6 +208,22 @@ void BattleUI::renderText(Render &renderer, Shader &shader, TextRenderer &textRe
 }
 
 bool BattleUI::isPointInButton(double x, double y) {
-    return (x >= buttonX_topl && x <= buttonX_topl + buttonWidth && 
-            y >= buttonY_topl && y <= buttonY_topl + buttonHeight);
+
+    if (x >= buttonX_topl && x <= buttonX_topl + buttonWidth && y >= buttonY_topl && y <= buttonY_topl + buttonHeight){
+        std::cout << "Mouse clicked on Move button" << std::endl;
+        return true;
+    }
+    if (x >= buttonX_topr && x <= buttonX_topr + buttonWidth && y >= buttonY_topr && y <= buttonY_topr + buttonHeight){
+        std::cout << "Mouse clicked on Attack button" << std::endl;
+        return true;
+    }
+    if (x >= buttonX_botl && x <= buttonX_botl + buttonWidth && y >= buttonY_botl && y <= buttonY_botl + buttonHeight){
+        std::cout << "Mouse clicked on Defend button" << std::endl;
+        return true;
+    }
+    if (x >= buttonX_botr && x <= buttonX_botr + buttonWidth && y >= buttonY_botr && y <= buttonY_botr + buttonHeight){
+        std::cout << "Mouse clicked on Item button" << std::endl;
+        return true;
+    }
+    return false;
 }
