@@ -39,7 +39,7 @@ void BattleUI::render(Render &renderer, Shader &shader, TextRenderer &textRender
     renderOverlay(renderer, shader);
     // 2. Render button background
     for (auto &button : buttons) {
-        std::cout << button <<std::endl;
+        // std::cout << button <<std::endl;
         button.render(renderer, shader, textRenderer, windowWidth, windowHeight);
     }
 
