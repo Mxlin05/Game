@@ -68,7 +68,7 @@ void Enemy::update(float deltaTime, const glm::vec2 &playerPos) {
             continue;
         }
         if (Physics::aabbOverlap(Physics::getAABB_byID(aabbID), Physics::getAABB_byID(i))) {
-            std::cout << "Collision detected" << std::endl;
+            // std::cout << "Collision detected" << std::endl;
             position = old;
             break;
         }
@@ -107,7 +107,7 @@ void Enemy::followPath(float deltaTime) {
     // printPath(path);
     if (dist < 1.0f) {
         pathIndex++;
-        std::cout << "Advancing to waypoint index: " << pathIndex << std::endl;
+        // std::cout << "Advancing to waypoint index: " << pathIndex << std::endl;
     } else {
         direction = glm::normalize(direction);
         position += direction * speed * deltaTime;

@@ -24,7 +24,7 @@ $(OUTDIR):
 run: all
 	$(TARGET)
 
-clean:
+clean: 
 	rm -f $(TARGET)/*o $(TARGET)
 
 test-math: src/Math/Vector2D.cpp test/Math_test/Vector2D_test.cpp
