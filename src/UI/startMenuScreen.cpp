@@ -3,6 +3,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <GLFW/glfw3.h>
 #include "TextRender.h"
+#include "TextAlignment.h"
 #include <iostream>
 
 StartMenuScreen::StartMenuScreen(int windowWidth, int windowHeight) : windowWidth(windowWidth), windowHeight(windowHeight) {
@@ -135,8 +136,11 @@ void StartMenuScreen::renderText(Render &renderer, Shader &shader, TextRenderer 
     // Note: TextRenderer uses baseline coordinates, so we need to account for text height and bearing
     float textY = buttonY + (buttonHeight / 2.0f);
     
+    float padding = 40.0f;
+    float lineHeight = 5.0f;
     // Render "Play Game" text in the button
-    textRenderer.RenderText(buttonText, textX, textY, scale, glm::vec3(0.0f, 0.0f, 0.0f), projection);
+    auto [alignedX, alignedY] = ALIGN_MIDDLE_CENTER(buttonX - padding, buttonY - lineHeight, buttonWidth, buttonHeight, buttonText, scale);
+    textRenderer.RenderText(buttonText, alignedX, alignedY, scale, glm::vec3(0.0f, 0.0f, 0.0f), projection);
 }
 
 // Text rendering removed - just showing button without text for now
