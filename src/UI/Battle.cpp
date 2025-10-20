@@ -6,6 +6,7 @@
 #include "Global.h"
 #include "UIManager.h"
 #include "Player.h"
+#include "TextAlignment.h"
 #include <iostream>
 
 BattleUI::BattleUI(int windowWidth, int windowHeight) : windowWidth(windowWidth), windowHeight(windowHeight) {
@@ -51,15 +52,10 @@ void BattleUI::render(Render &renderer, Shader &shader, TextRenderer &textRender
     renderOverlay(renderer, shader);
     
     // 2. Render button background
-    renderButton(renderer, shader, buttonX_topl, buttonY_topl);
-    renderButton(renderer, shader, buttonX_topr, buttonY_topr);
-    renderButton(renderer, shader, buttonX_botl, buttonY_botl);
-    renderButton(renderer, shader, buttonX_botr, buttonY_botr);
-
-    renderText(renderer, shader, textRenderer, buttonX_topl, buttonY_topl, buttonText1, 0.3f);
-    renderText(renderer, shader, textRenderer, buttonX_topr, buttonY_topr, buttonText2, 0.3f);
-    renderText(renderer, shader, textRenderer, buttonX_botl, buttonY_botl, buttonText3, 0.3f);
-    renderText(renderer, shader, textRenderer, buttonX_botr, buttonY_botr, buttonText4, 0.3f);
+    renderButton(renderer, shader, textRenderer, buttonX_topl, buttonY_topl, buttonText1);
+    renderButton(renderer, shader, textRenderer, buttonX_topr, buttonY_topr, buttonText2);
+    renderButton(renderer, shader, textRenderer, buttonX_botl, buttonY_botl, buttonText3);
+    renderButton(renderer, shader, textRenderer, buttonX_botr, buttonY_botr, buttonText4);
 
     renderStats(renderer, shader, textRenderer, statsX, statsY);
 }
@@ -116,7 +112,7 @@ void BattleUI::renderOverlay(Render &renderer, Shader &shader) {
     renderer.Draw(renderer.vao, renderer.ib, shader);
 }
 
-void BattleUI::renderButton(Render &renderer, Shader &shader, float buttonX, float buttonY) {
+void BattleUI::renderButton(Render &renderer, Shader &shader, TextRenderer &textRenderer, float buttonX, float buttonY, std::string buttonText) {
     // Set up projection matrix for UI rendering
     glm::mat4 projection = glm::ortho(0.0f, (float)windowWidth, 0.0f, (float)windowHeight);
     glm::mat4 view = glm::mat4(1.0f);
@@ -137,6 +133,33 @@ void BattleUI::renderButton(Render &renderer, Shader &shader, float buttonX, flo
     
     // Render button background
     renderer.Draw(renderer.vao, renderer.ib, shader);
+
+    float scale = 0.3f;
+    float lineHeight = 2.0f;
+    float padding = 5.0f;
+    // // Debug: Test with full text vs half text
+    // std::string halfText = buttonText.substr(0, buttonText.length() / 2);
+    // float fullTextWidth = GET_TEXT_WIDTH(buttonText, scale);
+    // float halfTextWidth = GET_TEXT_WIDTH(halfText, scale);
+    
+    // std::cout << "=== DEBUG TEXT WIDTH ===" << std::endl;
+    // std::cout << "Full text: '" << buttonText << "' (length=" << buttonText.length() << ") -> Width: " << fullTextWidth << std::endl;
+    // std::cout << "Half text: '" << halfText << "' (length=" << halfText.length() << ") -> Width: " << halfTextWidth << std::endl;
+    // std::cout << "Button: X=" << buttonX << ", W=" << buttonWidth << std::endl;
+    
+    // // Test both calculations manually
+    // float fullTextX = buttonX + (buttonWidth - fullTextWidth) / 2.0f;
+    // float halfTextX = buttonX + (buttonWidth - halfTextWidth) / 2.0f;
+    
+    // std::cout << "Manual calculation - Full text X: " << fullTextX << std::endl;
+    // std::cout << "Manual calculation - Half text X: " << halfTextX << std::endl;
+    // std::cout << "Difference: " << (fullTextX - halfTextX) << std::endl;
+    // std::cout << "========================" << std::endl;
+    
+    auto [alignedX, alignedY] = ALIGN_MIDDLE_CENTER(buttonX - 15.0f, buttonY, buttonWidth, buttonHeight, buttonText, scale);
+    std::cout << "Macro result with half text: X=" << alignedX << ", Y=" << alignedY << std::endl;
+    
+    renderText(renderer, shader, textRenderer, alignedX, alignedY, buttonText, scale);
 }
 
 void BattleUI::renderStats(Render &renderer, Shader &shader, TextRenderer &textRenderer, float statsX, float statsY) {
@@ -159,31 +182,33 @@ void BattleUI::renderStats(Render &renderer, Shader &shader, TextRenderer &textR
 
     renderer.Draw(renderer.vao, renderer.ib, shader);
 
-    renderText(renderer, shader, textRenderer, statsX, statsY, statsText1, 0.3f);
-    renderText(renderer, shader, textRenderer, statsX, statsY + 20.0f, statsText2, 0.3f);
-    renderText(renderer, shader, textRenderer, statsX, statsY + 40.0f, statsText3, 0.3f);
-    renderText(renderer, shader, textRenderer, statsX, statsY + 60.0f, statsText4, 0.3f);
-    renderText(renderer, shader, textRenderer, statsX, statsY + 80.0f, statsText5, 0.3f);
+    // Render stats text with proper alignment within the stats frame
+    float scale = 0.3f;
+    float lineHeight = 20.0f;
+    float padding = 20.0f;
+    
+    // Top-left aligned stats text with padding
+    auto [text1X, text1Y] = ALIGN_TOP_LEFT(statsX + padding, statsY + padding + lineHeight * 4, statsText1, scale);
+    renderText(renderer, shader, textRenderer, text1X, text1Y, statsText1, scale);
+    
+    auto [text2X, text2Y] = ALIGN_TOP_LEFT(statsX + padding, statsY + padding + lineHeight * 3, statsText2, scale);
+    renderText(renderer, shader, textRenderer, text2X, text2Y, statsText2, scale);
+    
+    auto [text3X, text3Y] = ALIGN_TOP_LEFT(statsX + padding, statsY + padding + lineHeight * 2, statsText3, scale);
+    renderText(renderer, shader, textRenderer, text3X, text3Y, statsText3, scale);
+    
+    auto [text4X, text4Y] = ALIGN_TOP_LEFT(statsX + padding, statsY + padding + lineHeight * 1, statsText4, scale);
+    renderText(renderer, shader, textRenderer, text4X, text4Y, statsText4, scale);
+    
+    auto [text5X, text5Y] = ALIGN_TOP_LEFT(statsX + padding, statsY + padding, statsText5, scale);
+    renderText(renderer, shader, textRenderer, text5X, text5Y, statsText5, scale);
 }
 
-void BattleUI::renderText(Render &renderer, Shader &shader, TextRenderer &textRenderer, float buttonX, float buttonY, std::string buttonText, float scale) {
+void BattleUI::renderText(Render &renderer, Shader &shader, TextRenderer &textRenderer, float X, float Y, std::string buttonText, float scale) {
     // Set up projection matrix for text rendering (screen space)
     glm::mat4 projection = glm::ortho(0.0f, (float)windowWidth, 0.0f, (float)windowHeight);
-    
-    // Calculate actual text width using character metrics
-    float textWidth = 0.0f;
-    for (char c : buttonText) {
-        textWidth += 12.0f * scale; // Approximate character width
-    }
-    
-    // Center the text horizontally within the button
-    float textX = buttonX + (buttonWidth / 2.0f) - (textWidth / 2.0f);
-    
-    // Center the text vertically within the button
-    float textY = buttonY + (buttonHeight / 2.0f);
-    
     // Render button text
-    textRenderer.RenderText(buttonText, textX, textY, scale, glm::vec3(0.0f, 0.0f, 0.0f), projection);
+    textRenderer.RenderText(buttonText, X, Y, scale, glm::vec3(0.0f, 0.0f, 0.0f), projection);
 }
 
 bool BattleUI::isPointInButton(double x, double y) {

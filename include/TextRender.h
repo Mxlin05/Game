@@ -23,6 +23,6 @@ public:
 
     TextRenderer(const Shader& shader);
     void Load(std::string font, unsigned int fontSize);
-    void RenderText(std::string text, float x, float y, float scale, glm::vec3 color);
+    void RenderText(std::string text, float x, float y, float scale, glm::vec3 color); //pretty sure this isn't used
     void RenderText(std::string text, float x, float y, float scale, glm::vec3 color, glm::mat4 projection);
 };
