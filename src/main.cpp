@@ -54,6 +54,9 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 UIManager g_uiManager;
 UIManager* g_uiManager_ptr = &g_uiManager;
 
+// Global player accessible from anywhere in the code
+Player* g_player = nullptr;
+
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
@@ -171,6 +174,7 @@ int main()
     Sprite sprite2(&texture2, &test, &renderer);
 
     Player player1(&sprite2, glm::vec2(0.0f, 0.0f), glm::vec2(100.0f, 100.0f), glm::vec2(0.0f));
+    g_player = &player1; // Set global player pointer
     Enemy obj2(&sprite1, glm::vec2(150.0f, 300.0f), glm::vec2(100.0f, 100.0f), glm::vec2(0.0f),  glm::vec2(150.0f, 300.0f), glm::vec2(400.0f), 50.0f, 300.0f);
     Npc npc1(&sprite1, glm::vec2(300.0f, 200.0f), glm::vec2(80.0f, 80.0f), glm::vec2(0.0f)); 
 

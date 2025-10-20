@@ -21,12 +21,13 @@ class BattleUI : public UIScreen{
 
     private:
         // Button properties
-        float buttonX_topl, buttonY_topl, buttonX_topr, buttonY_topr, buttonX_botl, buttonY_botl, buttonX_botr, buttonY_botr, buttonWidth, buttonHeight;
+        float buttonX_topl, buttonY_topl, buttonX_topr, buttonY_topr, buttonX_botl, buttonY_botl, buttonX_botr, buttonY_botr, buttonWidth, buttonHeight, statsWidth, statsHeight, statsX, statsY;
         std::string buttonText1, buttonText2, buttonText3, buttonText4;
-        
+        std::string statsText1, statsText2, statsText3, statsText4, statsText5;
         // Helper methods
         void renderOverlay(Render &renderer, Shader &shader);
         void renderButton(Render &renderer, Shader &shader, float buttonX, float buttonY);
-        void renderText(Render &renderer, Shader &shader, TextRenderer &textRenderer, float buttonX, float buttonY, std::string buttonText);
+        void renderStats(Render &renderer, Shader &shader, TextRenderer &textRenderer, float statsX, float statsY);
+        void renderText(Render &renderer, Shader &shader, TextRenderer &textRenderer, float buttonX, float buttonY, std::string buttonText, float scale);
         bool isPointInButton(double x, double y);
 };

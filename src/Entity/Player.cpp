@@ -6,6 +6,11 @@
 Player::Player(Sprite *sprite, glm::vec2 position, glm::vec2 size, glm::vec2 rotation)
     : GameObject(sprite, position, size, rotation), velocity(10.0f, 10.0f), speed(50.0f) {
     registerObjectType("player");
+    updateHealth(100);
+    updateArmor(10);
+    updateBattleSpeed(10);
+    updatePhysicalAttack(10);
+    updateMagicAttack(10);
 }
 
 Player::~Player() {
