@@ -6,6 +6,14 @@
 #include "Button.h"
 #include <vector>
 
+
+enum class BattleState {
+    MAIN, 
+    ATTACK,
+    MAGIC,
+    ITEM
+};
+
 class BattleUI : public UIScreen{
     int windowWidth, windowHeight;
     public: 
@@ -23,12 +31,19 @@ class BattleUI : public UIScreen{
 
     private:
         // Button properties
+
+        BattleState currentState = BattleState::MAIN;
+
         float statsWidth, statsHeight, statsX, statsY, playerX, playerY, playerWidth, playerHeight;
         std::string statsText1, statsText2, statsText3, statsText4, statsText5;
         std::vector<Button> buttons;
 
         // Helper methods
         void createButtons();
+        void createMainButtons();
+        void createAttackButtons();
+
+
         void renderText(Render &renderer, Shader &shader, TextRenderer &textRenderer, float buttonX, float buttonY, std::string buttonText, float scale);
         void renderOverlay(Render &renderer, Shader &shader);
         void renderStats(Render &renderer, Shader &shader, TextRenderer &textRenderer, float statsX, float statsY);

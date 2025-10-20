@@ -47,6 +47,20 @@ void BattleUI::render(Render &renderer, Shader &shader, TextRenderer &textRender
 }
 
 void BattleUI::createButtons(){
+
+    buttons.clear();
+
+    switch(currentState) {
+        case BattleState::MAIN:
+            createMainButtons();
+            break;
+        case BattleState::ATTACK:
+            createAttackButtons();
+            break;
+    }
+}
+
+void BattleUI::createMainButtons(){
     float buttonWidth = 200.0f;
     float buttonHeight = 50.0f;
     float startY = windowHeight / 2.0f;
@@ -59,9 +73,34 @@ void BattleUI::createButtons(){
 
 
     // Assign callbacks
-    buttons[0].onClick = []() { std::cout << "Attack!\n"; };
+    buttons[0].onClick = [this]() { 
+        std::cout << "Attack!\n";
+        currentState = BattleState::ATTACK;
+        createButtons(); 
+    };
     buttons[1].onClick = []() { std::cout << "Defend!\n"; };
     buttons[2].onClick = []() { std::cout << "Run Away!\n"; };
+}
+
+void BattleUI::createAttackButtons(){
+
+    //replace all this based on player atatacks
+    float buttonWidth = 200.0f;
+    float buttonHeight = 50.0f;
+    float startY = windowHeight / 2.0f;
+
+    buttons.emplace_back(windowWidth / 2.0f - buttonWidth / 2.0f, startY + 60.0f, buttonWidth, buttonHeight, 0.5,"Slash");
+    buttons.emplace_back(windowWidth / 2.0f - buttonWidth / 2.0f, startY, buttonWidth, buttonHeight, 0.5, "Heavy Strike");
+    buttons.emplace_back(windowWidth / 2.0f - buttonWidth / 2.0f, startY - 60.0f, buttonWidth, buttonHeight, 0.5, "Back");
+
+    buttons[0].onClick = []() { std::cout << "Used Slash!\n"; };
+    buttons[1].onClick = []() { std::cout << "Used Heavy Strike!\n"; };
+    buttons[2].onClick = [this]() {
+        std::cout << "Back to main menu\n";
+        currentState = BattleState::MAIN;
+        createButtons(); 
+    };
+    
 }
 
 void BattleUI::update(float deltaTime) {
