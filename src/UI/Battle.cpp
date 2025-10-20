@@ -13,9 +13,7 @@ BattleUI::BattleUI(int windowWidth, int windowHeight) : windowWidth(windowWidth)
     active = true;
     tileMaps["generic_battle_map"] = new TileMap("res/battle_tilemap.csv");
     tileMapShader = new Shader("res/shaders/basicTest.glsl");
-    // Set button properties - center the button on screen
-    buttonWidth = 100.0f;
-    buttonHeight = 30.0f;
+
 
     statsWidth = 150.0f;
     statsHeight = 125.0f;
