@@ -180,6 +180,7 @@ int main()
     std::vector<Move> playerMoves = loadMovesFromCSV("res/moves/PhysicalAttacks.csv");
     std::cout << "Player Move size : " << playerMoves.size() << std::endl;
     player1.Moves = playerMoves;
+    player1.initMoves();
 
     std::vector<Player *> players;
     players.push_back(&player1);

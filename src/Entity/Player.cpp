@@ -12,6 +12,7 @@ Player::Player(Sprite *sprite, glm::vec2 position, glm::vec2 size, glm::vec2 rot
     updateBattleSpeed(10);
     updatePhysicalAttack(10);
     updateMagicAttack(10);
+
 }
 
 Player::~Player() {
@@ -114,4 +115,8 @@ void Player::learnMove(const Move& move) {
 
 void Player::useMove(int index){
 
+}
+
+void Player::initMoves(){
+    initializeMoveCallbacks(Moves);
 }

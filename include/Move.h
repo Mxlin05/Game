@@ -1,13 +1,13 @@
 #pragma once
 #include <string>
 #include <functional>
-#include "GameObject.h"
 // #include <nlohmann/json.hpp>
 #include <fstream>
 #include <iostream>
 
 
 class Player;
+class GameObject;
 
 struct Move {
     int id;

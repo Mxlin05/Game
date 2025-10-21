@@ -4,6 +4,8 @@
 #include "Inventory.h"
 #include "Move.h"
 #include <vector>
+#include "MoveCallBackMap.h"
+
 
 class Player : public GameObject{
     
@@ -32,6 +34,8 @@ class Player : public GameObject{
         void updateBattleSpeed(int b);
         void updatePhysicalAttack(int a);
         void updateMagicAttack(int a);
+
+        void initMoves();
 
         glm::vec2 getPosition() const;
 

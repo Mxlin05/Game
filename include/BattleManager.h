@@ -1,8 +1,11 @@
 #pragma once
-#include "Player.h"
-#include "Enemy.h"
+
 #include "UIScreen.h"
 #include <vector>
+
+
+class Player;
+class Enemy;
 
 enum class TurnState {
     PlayerTurn,

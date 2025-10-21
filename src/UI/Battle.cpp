@@ -125,9 +125,10 @@ void BattleUI::createAttackButtons(){
             move.name
         );
 
+        //Temporary, need to be able to select enemies
         buttons.back().onClick = [player, move]() mutable {
             std::cout << "Using " << move.name << "!\n";
-            // call move function call back here?
+            move.useMove(*player, *player);
         };
     }
 
