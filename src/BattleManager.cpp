@@ -34,10 +34,13 @@ void BattleManager::nextTurn(){
     if (currState == TurnState::PlayerTurn)
     {
         std::cout << "Playe turn, go to enemy turn: " << std::endl;
-        if(currentPlayerIndex >= players.size()){
-            currentPlayerIndex = 0;
-        }else{
+        std::cout << "Player size : " << players.size() << std::endl;
+        if(currentPlayerIndex < players.size() - 1){
             currentPlayerIndex = currentPlayerIndex + 1;
+        }else{
+            currentPlayerIndex = 0;
+            std::cout << "This should be running, player index should be 0" << std::endl;
+
         }
 
         currState = TurnState::EnemyTurn;
@@ -45,17 +48,31 @@ void BattleManager::nextTurn(){
     }
 
     if(currState == TurnState::EnemyTurn){
+
+        //THIS WILL BE CHANGED IN THE FURTURE BUT JKUST SKIP FOR NOW
+        currState = TurnState::PlayerTurn;
+        return;
+
         std::cout << "Enemy turn, go to Player turn: " << std::endl;
-        if(currentEnemyIndex >= enemies.size()){
-            currentEnemyIndex = 0;
-        }else{
+        if(currentEnemyIndex < enemies.size() - 1){
             currentEnemyIndex = currentEnemyIndex + 1;
+        }else{
+            currentEnemyIndex = 0;
         }
         currState = TurnState::PlayerTurn;
         return;
     }
 }
 
+Player* BattleManager::getPlayer(){
+    std::cout << "Current Player Index: " << currentPlayerIndex << std::endl;
+    return players[currentPlayerIndex];
+}
+
+
+Enemy* BattleManager::getEnemy(){
+    return enemies[currentEnemyIndex];
+}
 
 //check if everyone is dead
 // void BattleManager::checlBattleOver(){

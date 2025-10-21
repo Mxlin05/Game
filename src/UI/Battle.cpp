@@ -94,18 +94,54 @@ void BattleUI::createMainButtons(){
 
 void BattleUI::createAttackButtons(){
 
+    Player *player = manager.getPlayer();
+
+    if(player == nullptr){
+        std::cout << "WTF PALYER DOES NOT EXIST" << std::endl;
+    }
+
     //replace all this based on player atatacks
     float buttonWidth = 200.0f;
     float buttonHeight = 50.0f;
     float startY = windowHeight / 2.0f;
 
-    buttons.emplace_back(windowWidth / 2.0f - buttonWidth / 2.0f, startY + 60.0f, buttonWidth, buttonHeight, 0.5,"Slash");
-    buttons.emplace_back(windowWidth / 2.0f - buttonWidth / 2.0f, startY, buttonWidth, buttonHeight, 0.5, "Heavy Strike");
-    buttons.emplace_back(windowWidth / 2.0f - buttonWidth / 2.0f, startY - 60.0f, buttonWidth, buttonHeight, 0.5, "Back");
+    std::cout << "Not In moves : " << player->Moves.size() << std::endl;
 
-    buttons[0].onClick = []() { std::cout << "Used Slash!\n"; };
-    buttons[1].onClick = []() { std::cout << "Used Heavy Strike!\n"; };
-    buttons[2].onClick = [this]() {
+    for (int i = 0; i < player->Moves.size(); i++){
+        
+        std::cout << "In moves : " << i << std::endl;
+
+        Move& move = player->Moves[i];
+
+        std::cout << "Move name: " << move.name <<std::endl;
+        float y = startY - (i * 60.0f);
+
+          buttons.emplace_back(
+            windowWidth / 2.0f - buttonWidth / 2.0f,
+            y,
+            buttonWidth,
+            buttonHeight,
+            0.5f,
+            move.name
+        );
+
+        buttons.back().onClick = [player, move]() mutable {
+            std::cout << "Using " << move.name << "!\n";
+            // call move function call back here?
+        };
+    }
+
+    //adds a back buttons
+    buttons.emplace_back(
+        windowWidth / 2.0f - buttonWidth / 2.0f,
+        startY - (player->Moves.size() * 60.0f),
+        buttonWidth,
+        buttonHeight,
+        0.5f,
+        "Back"
+    );
+
+    buttons.back().onClick = [this]() {
         std::cout << "Back to main menu\n";
         currentState = BattleState::MAIN;
         createButtons(); 

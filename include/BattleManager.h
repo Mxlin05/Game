@@ -25,6 +25,9 @@ class BattleManager {
 
         bool checkEnd() const;
 
+        Player *getPlayer();
+        Enemy *getEnemy();
+
 
         //something to deal wioth turn
 

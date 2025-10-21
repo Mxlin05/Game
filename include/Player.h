@@ -39,4 +39,6 @@ class Player : public GameObject{
         void learnMove(const Move& move);
         void useMove(int index);
 
+        void useMove();
+
 };
