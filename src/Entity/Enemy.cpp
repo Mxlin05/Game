@@ -133,6 +133,10 @@ void Enemy::updateArmor(int a){
     stats.armor = a;
 }
 
+void Enemy::updateMagicArmor(int a){
+    stats.magicArmor = a;
+}
+
 void Enemy::updateBattleSpeed(int b){
     stats.battleSpeed = b;
 }

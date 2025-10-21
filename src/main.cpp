@@ -23,6 +23,7 @@
 #include "Global.h"
 #include "TextRender.h"
 #include <chrono>
+#include "Move.h"
 
 // Declare these outside your game loop (e.g., as member variables)
 auto lastTime = std::chrono::high_resolution_clock::now();
@@ -174,6 +175,17 @@ int main()
     Sprite sprite2(&texture2, &test, &renderer);
 
     Player player1(&sprite2, glm::vec2(0.0f, 0.0f), glm::vec2(100.0f, 100.0f), glm::vec2(0.0f));
+
+    //THIS IS FOR TESTING PRUPOSES, WE CAN MAKE A GLOBAL INSTANCE OF PLAYER VECTOR I THE FUTURE
+    std::vector<Move> playerMoves = loadMovesFromCSV("res/moves/PhysicalAttacks.csv");
+    std::cout << "Player Move size : " << playerMoves.size() << std::endl;
+    player1.Moves = playerMoves;
+    player1.initMoves();
+
+    std::vector<Player *> players;
+    players.push_back(&player1);
+
+
     g_player = &player1; // Set global player pointer
     Enemy obj2(&sprite1, glm::vec2(150.0f, 300.0f), glm::vec2(100.0f, 100.0f), glm::vec2(0.0f),  glm::vec2(150.0f, 300.0f), glm::vec2(400.0f), 50.0f, 300.0f);
     Npc npc1(&sprite1, glm::vec2(300.0f, 200.0f), glm::vec2(80.0f, 80.0f), glm::vec2(0.0f)); 
@@ -209,7 +221,7 @@ int main()
 
     // Initialize UI system
     g_uiManager.addScreen("StartMenu", std::make_unique<StartMenuScreen>(windowWidth, windowHeight));
-    g_uiManager.addScreen("Battle", std::make_unique<BattleUI>(windowWidth, windowHeight));
+    g_uiManager.addScreen("Battle", std::make_unique<BattleUI>(windowWidth, windowHeight, players));
     g_uiManager.setCurrScreen("StartMenu");
     
     float lastTime = glfwGetTime();

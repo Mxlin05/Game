@@ -9,7 +9,9 @@
 #include "TextAlignment.h"
 #include <iostream>
 
-BattleUI::BattleUI(int windowWidth, int windowHeight) : windowWidth(windowWidth), windowHeight(windowHeight) {
+BattleUI::BattleUI(int windowWidth, int windowHeight, std::vector<Player *> players, std::vector<Enemy *> enemies)
+    : windowWidth(windowWidth), windowHeight(windowHeight), manager(players, enemies) {    
+
     active = true;
     tileMaps["generic_battle_map"] = new TileMap("res/battle_tilemap.csv");
     tileMapShader = new Shader("res/shaders/basicTest.glsl");
@@ -92,18 +94,55 @@ void BattleUI::createMainButtons(){
 
 void BattleUI::createAttackButtons(){
 
+    Player *player = manager.getPlayer();
+
+    if(player == nullptr){
+        std::cout << "WTF PALYER DOES NOT EXIST" << std::endl;
+    }
+
     //replace all this based on player atatacks
     float buttonWidth = 200.0f;
     float buttonHeight = 50.0f;
     float startY = windowHeight / 2.0f;
 
-    buttons.emplace_back(windowWidth / 2.0f - buttonWidth / 2.0f, startY + 60.0f, buttonWidth, buttonHeight, 0.5,"Slash");
-    buttons.emplace_back(windowWidth / 2.0f - buttonWidth / 2.0f, startY, buttonWidth, buttonHeight, 0.5, "Heavy Strike");
-    buttons.emplace_back(windowWidth / 2.0f - buttonWidth / 2.0f, startY - 60.0f, buttonWidth, buttonHeight, 0.5, "Back");
+    std::cout << "Not In moves : " << player->Moves.size() << std::endl;
 
-    buttons[0].onClick = []() { std::cout << "Used Slash!\n"; };
-    buttons[1].onClick = []() { std::cout << "Used Heavy Strike!\n"; };
-    buttons[2].onClick = [this]() {
+    for (int i = 0; i < player->Moves.size(); i++){
+        
+        std::cout << "In moves : " << i << std::endl;
+
+        Move& move = player->Moves[i];
+
+        std::cout << "Move name: " << move.name <<std::endl;
+        float y = startY - (i * 60.0f);
+
+          buttons.emplace_back(
+            windowWidth / 2.0f - buttonWidth / 2.0f,
+            y,
+            buttonWidth,
+            buttonHeight,
+            0.5f,
+            move.name
+        );
+
+        //Temporary, need to be able to select enemies
+        buttons.back().onClick = [player, move]() mutable {
+            std::cout << "Using " << move.name << "!\n";
+            move.useMove(*player, *player);
+        };
+    }
+
+    //adds a back buttons
+    buttons.emplace_back(
+        windowWidth / 2.0f - buttonWidth / 2.0f,
+        startY - (player->Moves.size() * 60.0f),
+        buttonWidth,
+        buttonHeight,
+        0.5f,
+        "Back"
+    );
+
+    buttons.back().onClick = [this]() {
         std::cout << "Back to main menu\n";
         currentState = BattleState::MAIN;
         createButtons(); 
@@ -117,6 +156,8 @@ void BattleUI::update(float deltaTime) {
 
 void BattleUI::init() {
     createButtons();
+
+    manager.startBattle();
 }
 
 void BattleUI::renderMap(Render &renderer, Shader &shader) {
@@ -246,6 +287,7 @@ bool BattleUI::isPointInButton(double x, double y) {
     for (auto &button : buttons) {
         if (button.isInside(x, y, false) && button.onClick){
             button.onClick();
+            manager.nextTurn();
             return true;
         }
     }
