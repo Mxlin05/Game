@@ -52,7 +52,7 @@ void Player::update(const glm::vec2 &move){
                     std::cout << "Player collided with enemy!" << std::endl;
                     // Switch to battle screen
                     g_uiManager.setCurrScreen("Battle");
-                    std::cout << "Attempted to switch to Battle screen" << std::endl;
+                    // std::cout << "Attempted to switch to Battle screen" << std::endl;
                 }
                 else if (it->second == "npc") {
                     std::cout << "Player collided with NPC!" << std::endl;

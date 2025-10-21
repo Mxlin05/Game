@@ -9,7 +9,8 @@
 
 
 enum class BattleState {
-    MAIN, 
+    MAIN,
+    TRAVEL, 
     ATTACK,
     MAGIC,
     ITEM
