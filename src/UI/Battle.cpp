@@ -213,7 +213,7 @@ void BattleUI::renderMap(Render &renderer, Shader &shader) {
         // Draw the tile map in the 70% area
         // Start drawing from the bottom of the 70% area (overlayY)
         // std::cout << "Debug - Drawing tile map at startX: 0, startY: " << (int)overlayY << std::endl;
-        map->draw(renderer, *tileMapShader, windowWidth, (int)overlayHeight, 16, 0, (int)overlayY);
+        map->draw(renderer, *tileMapShader, windowWidth, (int)overlayHeight, 14, 0, (int)overlayY);
     }
 }
 void BattleUI::renderStats(Render &renderer, Shader &shader, TextRenderer &textRenderer, float statsX, float statsY) {
