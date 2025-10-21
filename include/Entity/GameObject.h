@@ -21,6 +21,19 @@ class GameObject{
         glm::vec2 size;
         glm::vec2 rotation;
         size_t aabbID;
+
+        Stats stats;
+
+        virtual void updateHealth(int) {}
+        virtual void updatePhysicalArmor(int) {}
+        virtual void updateMagicArmor(int) {}
+        virtual void updateBattleSpeed(int) {}
+        virtual void updatePhysicalAttack(int) {}
+        virtual void updateMagicAttack(int) {}
+        virtual void takeDamage(int damage, std::string type);
+        virtual void buffStat(std::vector<int>) {}
+        virtual void debuffStat(std::vector<int>) {}
+        virtual void heal(int) {}
         
         // Static global map for all object types
         static std::map<const AABB, std::string> enemyType; 
@@ -41,5 +54,7 @@ class GameObject{
         
         glm::vec2 getPosition() const;
         glm::vec2 getSize() const;
+
+
 
 };

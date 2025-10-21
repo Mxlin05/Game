@@ -36,12 +36,12 @@ class Enemy : public GameObject {
         void calculatePath(const glm::vec2 &target);
         void updateAABB();
 
-        void updateHealth(int h);
-        void updateArmor(int a);
-        void updateMagicArmor(int a);
-        void updateBattleSpeed(int b);
-        void updatePhysicalAttack(int a);
-        void updateMagicAttack(int a);
+        void updateHealth(int h) override;
+        void updatePhysicalArmor(int a) override;
+        void updateMagicArmor(int a) override;
+        void updateBattleSpeed(int b) override;
+        void updatePhysicalAttack(int a) override;
+        void updateMagicAttack(int a) override;
 
         glm::ivec2 worldToTile(const glm::vec2& pos, float tileSize);
         glm::vec2 tileToWorld(const glm::ivec2& tile, float tileSize);
@@ -52,4 +52,11 @@ class Enemy : public GameObject {
                 std::cout << "(" << point.x << ", " << point.y << ")\n";
             }
         }
+
+
+        
+        void takeDamage(int damage, std::string type) override;
+        void buffStat(std::vector<int> buffStats) override;
+        void debuffStat(std::vector<int> buffStats) override;
+        void heal(int heal) override;
 };

@@ -120,3 +120,24 @@ void Player::useMove(int index){
 void Player::initMoves(){
     initializeMoveCallbacks(Moves);
 }
+
+
+//WE CAN CHANGE HOW WE DECIDE ON STATS LATER
+void Player::takeDamage(int damage, std::string type) {
+
+    GameObject::takeDamage(damage, type);
+
+}
+
+void Player::buffStat(std::vector<int> s) {
+    // TODO
+}
+
+void Player::debuffStat(std::vector<int> s) {
+    // TODO
+}
+
+void Player::heal(int amount) {
+    // TODO
+}
+

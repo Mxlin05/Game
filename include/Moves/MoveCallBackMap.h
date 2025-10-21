@@ -4,9 +4,7 @@
 #include <string>
 #include <functional>
 #include <vector>
-
-
-class Player;
-class GameObject;
+#include "Player.h"
+#include "GameObject.h"
 
 void initializeMoveCallbacks(std::vector<Move>& moves);

@@ -28,12 +28,12 @@ class Player : public GameObject{
         void update(const glm::vec2 &move);
         void updateAABB();
 
-        void updateHealth(int h);
-        void updatePhysicalArmor(int a);
-        void updateMagicArmor(int a);
-        void updateBattleSpeed(int b);
-        void updatePhysicalAttack(int a);
-        void updateMagicAttack(int a);
+        void updateHealth(int h) override;
+        void updatePhysicalArmor(int a) override;
+        void updateMagicArmor(int a) override;
+        void updateBattleSpeed(int b) override;
+        void updatePhysicalAttack(int a) override;
+        void updateMagicAttack(int a) override;
 
         void initMoves();
 
@@ -44,5 +44,12 @@ class Player : public GameObject{
         void useMove(int index);
 
         void useMove();
+
+              
+        void takeDamage(int damage, std::string type) override;
+        void buffStat(std::vector<int> buffStats) override;
+        void debuffStat(std::vector<int> buffStats) override;
+        void heal(int heal) override;
+
 
 };

@@ -6,6 +6,7 @@
 #include "Global.h"
 #include "UIManager.h"
 #include "Player.h"
+#include "Enemy.h"
 #include "TextAlignment.h"
 #include <iostream>
 
@@ -96,6 +97,11 @@ void BattleUI::createAttackButtons(){
 
     Player *player = manager.getPlayer();
 
+    //add this later
+    std::vector<Enemy> *enemies;
+
+    Enemy *enemy = nullptr;
+
     if(player == nullptr){
         std::cout << "WTF PALYER DOES NOT EXIST" << std::endl;
     }
@@ -126,7 +132,7 @@ void BattleUI::createAttackButtons(){
         );
 
         //Temporary, need to be able to select enemies
-        buttons.back().onClick = [player, move]() mutable {
+        buttons.back().onClick = [player, enemy, move]() mutable {
             std::cout << "Using " << move.name << "!\n";
             move.useMove(*player, *player);
         };
