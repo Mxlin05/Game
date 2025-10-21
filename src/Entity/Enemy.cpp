@@ -125,11 +125,11 @@ glm::vec2 Enemy::tileToWorld(const glm::ivec2& tile, float tileSize) {
     return glm::vec2(tile.x * tileSize + tileSize / 2, tile.y * tileSize + tileSize / 2);
 }
 
-void Enemy::updateHealth(int h){
+void Enemy::updateHealth(int h) {
     stats.health = h;
 }
 
-void Enemy::updateArmor(int a){
+void Enemy::updatePhysicalArmor(int a){
     stats.armor = a;
 }
 
@@ -147,4 +147,22 @@ void Enemy::updatePhysicalAttack(int a){
 
 void Enemy::updateMagicAttack(int a){
     stats.magicAttack = a;
+}
+
+void Enemy::takeDamage(int damage, std::string type) {
+
+    GameObject::takeDamage(damage, type);
+
+}
+
+void Enemy::buffStat(std::vector<int> s) {
+    // TODO
+}
+
+void Enemy::debuffStat(std::vector<int> s) {
+    // TODO
+}
+
+void Enemy::heal(int amount) {
+    // TODO
 }

@@ -50,3 +50,20 @@ std::string GameObject::getObjectType() const {
     return "unknown"; // Return "unknown" if not found
 }
 
+
+void GameObject::takeDamage(int damage, std::string type)  {
+    int damageTaken = 0; 
+    if(type == "physical"){
+        damageTaken = damage - stats.armor;
+        std::cout << "phys damage: " << damageTaken << std::endl;
+    }else if(type == "magic"){
+        damageTaken = damage - stats.magicArmor;
+        std::cout << "magic damage: " << damageTaken << std::endl;
+    }else{
+        std::cout << "NEITHER DAMAGE TYPE, WE FUCKED UP" << std::endl;
+    }
+    
+    stats.health = stats.health - damageTaken;
+    std::cout << "Player health: " << stats.health << std::endl;
+    return;
+}
