@@ -102,7 +102,10 @@ void Player::updateBattleSpeed(int b){
 }
 
 void Player::updatePhysicalAttack(int a){
+    std::cout << " user phys attack power: " << a << std::endl;
     stats.physAttack = a;
+    std::cout << " user phys attack power: " << stats.physAttack << std::endl;
+
 }
 
 void Player::updateMagicAttack(int a){
@@ -125,7 +128,20 @@ void Player::initMoves(){
 //WE CAN CHANGE HOW WE DECIDE ON STATS LATER
 void Player::takeDamage(int damage, std::string type) {
 
-    GameObject::takeDamage(damage, type);
+    int damageTaken = 0; 
+    if(type == "physical"){
+        damageTaken = damage - stats.armor;
+        std::cout << "phys damage: " << damageTaken << std::endl;
+    }else if(type == "magic"){
+        damageTaken = damage - stats.magicArmor;
+        std::cout << "magic damage: " << damageTaken << std::endl;
+    }else{
+        std::cout << "NEITHER DAMAGE TYPE, WE FUCKED UP" << std::endl;
+    }
+    
+    stats.health = stats.health - damageTaken;
+    std::cout << "Player health: " << stats.health << std::endl;
+    return;
 
 }
 

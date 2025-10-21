@@ -30,7 +30,7 @@ class GameObject{
         virtual void updateBattleSpeed(int) {}
         virtual void updatePhysicalAttack(int) {}
         virtual void updateMagicAttack(int) {}
-        virtual void takeDamage(int damage, std::string type);
+        virtual void takeDamage(int damage, std::string type) {}
         virtual void buffStat(std::vector<int>) {}
         virtual void debuffStat(std::vector<int>) {}
         virtual void heal(int) {}

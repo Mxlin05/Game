@@ -6,5 +6,6 @@
 #include <vector>
 #include "Player.h"
 #include "GameObject.h"
+#include "Enemy.h"
 
 void initializeMoveCallbacks(std::vector<Move>& moves);
