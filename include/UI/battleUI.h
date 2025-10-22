@@ -50,11 +50,13 @@ class BattleUI : public UIScreen{
         float statsWidth, statsHeight, statsX, statsY, playerX, playerY, playerWidth, playerHeight;
         std::string statsText1, statsText2, statsText3, statsText4, statsText5;
         std::vector<Button> buttons;
+        glm::vec2 mouseCoordinates;
 
         // Helper methods
         void createButtons();
         void createMainButtons();
         void createAttackButtons();
+        void createTravelButtons();
 
 
         void renderText(Render &renderer, Shader &shader, TextRenderer &textRenderer, float buttonX, float buttonY, std::string buttonText, float scale);

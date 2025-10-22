@@ -62,6 +62,9 @@ void BattleUI::createButtons(){
     buttons.clear();
 
     switch(currentState) {
+        case BattleState::TRAVEL:
+            createTravelButtons();
+            break;
         case BattleState::MAIN:
             createMainButtons();
             break;
@@ -78,19 +81,25 @@ void BattleUI::createMainButtons(){
 
     buttons.clear();
 
+    buttons.emplace_back(windowWidth / 2.0f - buttonWidth / 2.0f, startY + 120.0f, buttonWidth, buttonHeight, 0.5, "Travel");
     buttons.emplace_back(windowWidth / 2.0f - buttonWidth / 2.0f, startY + 60.0f, buttonWidth, buttonHeight, 0.5, "Attack");
     buttons.emplace_back(windowWidth / 2.0f - buttonWidth / 2.0f, startY, buttonWidth, buttonHeight, 0.5, "Defend");
     buttons.emplace_back(windowWidth / 2.0f - buttonWidth / 2.0f, startY - 60.0f, buttonWidth, buttonHeight, 0.5, "Run");
 
 
     // Assign callbacks
-    buttons[0].onClick = [this]() { 
+    buttons[0].onClick = [this]() {
+        std::cout << "Travel!\n";
+        currentState = BattleState::TRAVEL;
+        createButtons();
+    };
+    buttons[1].onClick = [this]() { 
         std::cout << "Attack!\n";
         currentState = BattleState::ATTACK;
         createButtons(); 
     };
-    buttons[1].onClick = []() { std::cout << "Defend!\n"; };
-    buttons[2].onClick = []() { std::cout << "Run Away!\n"; };
+    buttons[2].onClick = []() { std::cout << "Defend!\n"; };
+    buttons[3].onClick = []() { std::cout << "Run Away!\n"; };
 }
 
 void BattleUI::createAttackButtons(){
@@ -154,6 +163,12 @@ void BattleUI::createAttackButtons(){
         createButtons(); 
     };
     
+}
+
+void BattleUI::createTravelButtons(){
+    buttons.clear();
+    std::cout << "Creating travel buttons\n";
+    std::cout << "Travel mode activated - click anywhere to see coordinates\n";
 }
 
 void BattleUI::update(float deltaTime) {
@@ -301,6 +316,15 @@ void BattleUI::onMouseClick(double x, double y) {
     
     // Convert GLFW coordinates (top-left origin) to OpenGL coordinates (bottom-left origin)
     double openGLY = windowHeight - y;
+    
+    // Store mouse coordinates
+    mouseCoordinates = glm::vec2(x, openGLY);
+    
+    // Print coordinates when in travel state
+    if (currentState == BattleState::TRAVEL) {
+        std::cout << "Travel mode - Mouse click at coordinates: (" << x << ", " << openGLY << ")" << std::endl;
+    }
+    
     bool clickedOnButton = isPointInButton(x, openGLY);
 }
 
