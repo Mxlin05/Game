@@ -23,12 +23,12 @@ class Enemy : public GameObject {
         glm::vec2 patrolStart;
         glm::vec2 patrolEnd;
         
-
+        std::string name;
 
         //add stats
         Stats stats;
 
-        Enemy(Sprite *sprite, glm::vec2 position, glm::vec2 size, glm::vec2 rotation, glm::vec2 patrolStart, glm::vec2 patrolEnd, float speed, float detectionRange);
+        Enemy(std::string name, Sprite *sprite, glm::vec2 position, glm::vec2 size, glm::vec2 rotation, glm::vec2 patrolStart, glm::vec2 patrolEnd, float speed, float detectionRange);
         ~Enemy();
 
         void update(float deltaTime, const glm::vec2& playerPosition);

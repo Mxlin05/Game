@@ -163,6 +163,7 @@ int main()
     Shader test("res/shaders/basicTest.glsl");
     Shader uiShader("res/shaders/ui.glsl");
     Shader textShader("res/shaders/text.glsl");
+    Shader enemyShader("res/shaders/enemy.glsl");
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -171,10 +172,10 @@ int main()
     Texture texture1("res/textures/lilla_fat_cheeks.png");
     Texture texture2("res/textures/test1.png");
 
-    Sprite sprite1(&texture1, &test, &renderer);
+    Sprite sprite1(&texture1, &test, &renderer, SpriteType::Enemy);
     Sprite sprite2(&texture2, &test, &renderer);
 
-    Player player1(&sprite2, glm::vec2(0.0f, 0.0f), glm::vec2(100.0f, 100.0f), glm::vec2(0.0f));
+    Player player1("player1", &sprite2, glm::vec2(0.0f, 0.0f), glm::vec2(100.0f, 100.0f), glm::vec2(0.0f));
 
     //THIS IS FOR TESTING PRUPOSES, WE CAN MAKE A GLOBAL INSTANCE OF PLAYER VECTOR I THE FUTURE
     std::vector<Move> playerMoves = loadMovesFromCSV("res/moves/PhysicalAttacks.csv");
@@ -186,7 +187,7 @@ int main()
     players.push_back(&player1);
 
     g_player = &player1; // Set global player pointer
-    Enemy obj2(&sprite1, glm::vec2(150.0f, 300.0f), glm::vec2(100.0f, 100.0f), glm::vec2(0.0f),  glm::vec2(150.0f, 300.0f), glm::vec2(400.0f), 50.0f, 300.0f);
+    Enemy obj2("Enemy1", &sprite1, glm::vec2(150.0f, 300.0f), glm::vec2(100.0f, 100.0f), glm::vec2(0.0f),  glm::vec2(150.0f, 300.0f), glm::vec2(400.0f), 50.0f, 300.0f);
     Npc npc1(&sprite1, glm::vec2(300.0f, 200.0f), glm::vec2(80.0f, 80.0f), glm::vec2(0.0f)); 
 
     std::vector<Enemy*> enemies;

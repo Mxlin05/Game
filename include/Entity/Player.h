@@ -15,9 +15,10 @@ class Player : public GameObject{
         //Inventory Inventory;
         glm::vec2 velocity;
         float speed;
-        Player(Sprite *sprite, glm::vec2 position, glm::vec2 size, glm::vec2 rotation);
+        Player(std::string name, Sprite *sprite, glm::vec2 position, glm::vec2 size, glm::vec2 rotation);
         ~Player();
 
+        std::string name;
 
         //add stats
         Stats stats;

@@ -6,7 +6,7 @@
 
 //need to get right includes for glm
 
-Sprite::Sprite(Texture *texture, Shader *shader, Render *renderer) : texture(*texture), shader(*shader), renderer(*renderer) {
+Sprite::Sprite(Texture *texture, Shader *shader, Render *renderer, SpriteType type) : texture(*texture), shader(*shader), renderer(*renderer), type(type), isSelected(false), isHovered(false), colorTint(glm::vec3(1.0f, 1.0f, 1.0f)) {
 }
 
 Sprite::~Sprite() {
@@ -18,6 +18,20 @@ Sprite::~Sprite() {
 void Sprite::draw(int windowWidth, int windowHeight, glm::vec2 position, glm::vec2 size, glm::vec2 rotation) const {
     
     shader.use();
+
+    if(type == SpriteType::Enemy){
+        shader.setBool("isSelected", isSelected);
+        shader.setBool("IsHovered", isHovered);
+        shader.setUniformVec3("TintColor", colorTint);
+    }else{
+        shader.setBool("isSelected", false);
+        shader.setBool("IsHovered", false);
+        shader.setUniformVec3("TintColor", glm::vec3(1.0f));
+    }
+
+
+
+
     glm::mat4 model = glm::mat4(1.0f);
 
     model = glm::translate(model, glm::vec3(position.x, position.y, 0.0f));
@@ -34,6 +48,7 @@ void Sprite::draw(int windowWidth, int windowHeight, glm::vec2 position, glm::ve
 
     shader.setUniformMat4f("uModel", glm::value_ptr(model));
     //need to change where bind later
+    glActiveTexture(GL_TEXTURE0);
     texture.bind();
     shader.setUniform1i("uTexture", 0);
     glGetError();
@@ -47,6 +62,18 @@ void Sprite::draw_battle(int windowWidth, int windowHeight, glm::vec2 position, 
     
     shader.use();
     glm::mat4 model = glm::mat4(1.0f);
+
+
+    
+    if(type == SpriteType::Enemy){
+        shader.setBool("isSelected", isSelected);
+        shader.setBool("IsHovered", isHovered);
+        shader.setUniformVec3("TintColor", colorTint);
+    }else{
+        shader.setBool("isSelected", false);
+        shader.setBool("IsHovered", false);
+        shader.setUniformVec3("TintColor", glm::vec3(1.0f));
+    }
 
     model = glm::translate(model, glm::vec3(position.x, position.y, 0.0f));
     model = glm::translate(model, glm::vec3(0.5f * size.x, 0.5f * size.y, 0.0f));

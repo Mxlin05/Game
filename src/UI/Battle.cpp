@@ -36,10 +36,13 @@ BattleUI::BattleUI(int windowWidth, int windowHeight, std::vector<Player *> play
 }
 
 BattleUI::~BattleUI() {
+
+    std::cout << "Runs deconstructor" << std::endl;
     for (auto &[key, map] : tileMaps) {
         if (map) delete map;
     }
     if (tileMapShader) delete tileMapShader;
+
 }
 
 void BattleUI::render(Render &renderer, Shader &shader, TextRenderer &textRenderer) {
@@ -309,7 +312,12 @@ void BattleUI::onKeyPress(int key) {
     // Check for Escape key to end battle
     if (key == GLFW_KEY_ESCAPE) {
         std::cout << "Escape pressed - ending battle" << std::endl;
+        for (auto &Enemy : units["gen_enemies"]) {
+            if (Enemy) Enemy->sprite->isSelected = false;
+            if (Enemy) Enemy->sprite->isHovered = false; 
+        }
         g_uiManager.setCurrScreen("StartMenu"); // Return to game
+        
     }
     if (manager.getCurrentState() == TurnState::SelectingTarget) {
         manager.processInputs(key, manager.getPlayer());        

@@ -3,8 +3,8 @@
 #include "Global.h"
 #include "UIManager.h"
 
-Player::Player(Sprite *sprite, glm::vec2 position, glm::vec2 size, glm::vec2 rotation)
-    : GameObject(sprite, position, size, rotation), velocity(10.0f, 10.0f), speed(50.0f) {
+Player::Player(std::string name, Sprite *sprite, glm::vec2 position, glm::vec2 size, glm::vec2 rotation)
+    : GameObject(sprite, position, size, rotation), name(name), velocity(10.0f, 10.0f), speed(50.0f) {
     registerObjectType("player");
     updateHealth(100);
     updatePhysicalArmor(10);

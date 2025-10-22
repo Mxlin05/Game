@@ -24,6 +24,7 @@ class GameObject{
 
         Stats stats;
 
+
         virtual void updateHealth(int) {}
         virtual void updatePhysicalArmor(int) {}
         virtual void updateMagicArmor(int) {}

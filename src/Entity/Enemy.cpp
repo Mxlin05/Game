@@ -1,8 +1,8 @@
 #include "Enemy.h"
 
 
-Enemy::Enemy(Sprite *sprite, glm::vec2 position, glm::vec2 size, glm::vec2 rotation, glm::vec2 patrolStart, glm::vec2 patrolEnd, float speed, float detectionRange) 
-    : GameObject(sprite, position, size, rotation), patrolStart(patrolStart), patrolEnd(patrolEnd), speed(speed), dectectionRange(detectionRange) {
+Enemy::Enemy(std::string name, Sprite *sprite, glm::vec2 position, glm::vec2 size, glm::vec2 rotation, glm::vec2 patrolStart, glm::vec2 patrolEnd, float speed, float detectionRange) 
+    : GameObject(sprite, position, size, rotation), name(name), patrolStart(patrolStart), patrolEnd(patrolEnd), speed(speed), dectectionRange(detectionRange) {
     state = AIState::Idle;
     registerObjectType("enemy");
 }
@@ -156,6 +156,7 @@ void Enemy::updateMagicAttack(int a){
 
 void Enemy::takeDamage(int damage, std::string type) {
 
+    std::cout << "Enemy health before damage: " << stats.health << std::endl;
     int damageTaken = 0; 
     if(type == "physical"){
         damageTaken = damage - stats.armor;
@@ -168,7 +169,7 @@ void Enemy::takeDamage(int damage, std::string type) {
     }
     
     stats.health = stats.health - damageTaken;
-    std::cout << "Player health: " << stats.health << std::endl;
+    std::cout << "Enemy health: " << stats.health << std::endl;
     return;
 
 }

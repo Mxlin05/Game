@@ -65,7 +65,6 @@ void BattleManager::nextTurn(){
 }
 
 Player* BattleManager::getPlayer(){
-    std::cout << "Current Player Index: " << currentPlayerIndex << std::endl;
     return players[currentPlayerIndex];
 }
 
@@ -99,20 +98,24 @@ void BattleManager::selectTarget(Player *player){
 
 void BattleManager::processInputs(int key, Player *player){
 
-    std::cout << "Selecting targets" << std::endl;
+    std::cout << "Selecting targets, start of process inputs" << std::endl;
     if (currState != TurnState::SelectingTarget) return;
 
+    for (auto* e : enemies)
+        e->sprite->isHovered = false;
 
     if (key == GLFW_KEY_LEFT) {
         if (selectedEnemyIndex > 0){
             std::cout << "going down 1" << std::endl;
             selectedEnemyIndex--;
+            std::cout << "Name: " << enemies[selectedEnemyIndex]->name << std::endl;
         }
         std::cout << "registered press" << std::endl;
     } else if (key == GLFW_KEY_RIGHT) {
         if (selectedEnemyIndex < enemies.size() - 1){
             std::cout << "going up one" << std::endl;
             selectedEnemyIndex++;
+            std::cout << "Name: " << enemies[selectedEnemyIndex]->name << std::endl;
         }
 
         std::cout << "registered press" << std::endl;
@@ -122,14 +125,23 @@ void BattleManager::processInputs(int key, Player *player){
         if (it == selectedTargets.end()) {
             selectedTargets.push_back(selectedEnemyIndex);
             std::cout << "Enemy " << selectedEnemyIndex << " selected.\n";
+            enemies[selectedEnemyIndex]->sprite->isSelected = true;
         } else {
             selectedTargets.erase(it);
             std::cout << "Enemy " << selectedEnemyIndex << " deselected.\n";
+            enemies[selectedEnemyIndex]->sprite->isSelected = false;
         }
     }else if (key == GLFW_KEY_ENTER) {
         std::cout << "confirmed press" << std::endl;
         targetConfirmed = true;
         confirmTargets(player);
+    }
+
+    if (selectedEnemyIndex >= 0 && selectedEnemyIndex < enemies.size())
+    {
+        for (size_t i = 0; i < enemies.size(); ++i) {
+            enemies[i]->sprite->isHovered = (i == selectedEnemyIndex);
+        }
     }
 }
 
@@ -151,6 +163,7 @@ void BattleManager::confirmTargets(Player *player){
             Enemy* target = enemies[idx];
             std::cout << "Using " << pendingMove.name 
                       << " on enemy "  << std::endl;
+            std::cout << "Name: " << target->name << std::endl;
             pendingMove.useMove(*player, static_cast<GameObject&>(*target));        
         }
     }
