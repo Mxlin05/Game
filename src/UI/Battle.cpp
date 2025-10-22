@@ -10,8 +10,8 @@
 #include "TextAlignment.h"
 #include <iostream>
 
-BattleUI::BattleUI(int windowWidth, int windowHeight, std::vector<Player *> players, std::vector<Enemy *> enemies)
-    : windowWidth(windowWidth), windowHeight(windowHeight), manager(players, enemies) {    
+BattleUI::BattleUI(GLFWwindow* window, int windowWidth, int windowHeight, std::vector<Player *> players, std::vector<Enemy *> enemies)
+    : window(window), windowHeight(windowHeight), manager(players, enemies) {    
 
     active = true;
     tileMaps["generic_battle_map"] = new TileMap("res/battle_tilemap.csv");
@@ -132,9 +132,11 @@ void BattleUI::createAttackButtons(){
         );
 
         //Temporary, need to be able to select enemies
-        buttons.back().onClick = [player, enemy, move]() mutable {
+        buttons.back().onClick = [this, player, enemy, move]() mutable {
             std::cout << "Using " << move.name << "!\n";
-            move.useMove(*player, *player);
+            manager.selectTarget(window, player);
+            manager.setPendingMove(move);
+
         };
     }
 

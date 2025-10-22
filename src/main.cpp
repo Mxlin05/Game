@@ -221,7 +221,7 @@ int main()
 
     // Initialize UI system
     g_uiManager.addScreen("StartMenu", std::make_unique<StartMenuScreen>(windowWidth, windowHeight));
-    g_uiManager.addScreen("Battle", std::make_unique<BattleUI>(windowWidth, windowHeight, players));
+    g_uiManager.addScreen("Battle", std::make_unique<BattleUI>(window, windowWidth, windowHeight, players));
     g_uiManager.setCurrScreen("StartMenu");
     
     float lastTime = glfwGetTime();

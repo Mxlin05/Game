@@ -80,3 +80,61 @@ Enemy* BattleManager::getEnemy(){
 // }
 
 
+void BattleManager::selectTarget(GLFWwindow *window, Player *player){
+
+    currState = TurnState::SelectingTarget;
+    int selectedEnemyIndex = 0;
+    selectedTargets.clear();
+    targetConfirmed = false;
+    processInputs(window, player);
+
+}
+
+void BattleManager::processInputs(GLFWwindow *window, Player *player){
+    if (currState != TurnState::SelectingTarget) return;
+
+
+    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+        if (selectedEnemyIndex > 0)
+            selectedEnemyIndex--;
+    } else if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+        if (selectedEnemyIndex < enemies.size() - 1)
+            selectedEnemyIndex++;
+    } else if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+        auto it = std::find(selectedTargets.begin(), selectedTargets.end(), selectedEnemyIndex);
+        if (it == selectedTargets.end()) {
+            selectedTargets.push_back(selectedEnemyIndex);
+            std::cout << "Enemy " << selectedEnemyIndex << " selected.\n";
+        } else {
+            selectedTargets.erase(it);
+            std::cout << "Enemy " << selectedEnemyIndex << " deselected.\n";
+        }
+    }else if (glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS) {
+        targetConfirmed = true;
+        confirmTargets(player);
+    }
+}
+
+
+void BattleManager::setPendingMove(Move m) {
+    pendingMove = m;
+    hasPendingMove = true;
+}
+
+void BattleManager::confirmTargets(Player *player){
+
+    if(targetConfirmed == false || hasPendingMove == false){
+        std::cout << "FUCKED UP" << std::endl;
+        return;
+    }
+
+    for (int idx : selectedTargets) {
+        if (idx >= 0 && idx < enemies.size()) {
+            Enemy* target = enemies[idx];
+            std::cout << "Using " << pendingMove.name 
+                      << " on enemy "  << std::endl;
+            pendingMove.useMove(*player, static_cast<GameObject&>(*target));        
+        }
+    }
+
+}

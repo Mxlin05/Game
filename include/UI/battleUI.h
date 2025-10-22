@@ -6,6 +6,7 @@
 #include "Button.h"
 #include <vector>
 #include "BattleManager.h"
+#include <GLFW/glfw3.h>
 
 
 enum class BattleState {
@@ -20,10 +21,11 @@ enum class BattleState {
 
 class BattleUI : public UIScreen{
     int windowWidth, windowHeight;
+    GLFWwindow* window;
     std::unordered_map<std::string, TileMap*> tileMaps;
     Shader *tileMapShader;
     public: 
-        BattleUI(int windowWidth, int windowHeight, std::vector<Player *> players = {}, std::vector<Enemy *> enemies = {});
+        BattleUI(GLFWwindow* window, int windowWidth, int windowHeight, std::vector<Player *> players = {}, std::vector<Enemy *> enemies = {});
         ~BattleUI();
 
         void update(float deltaTime) override;

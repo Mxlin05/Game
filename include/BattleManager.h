@@ -2,16 +2,20 @@
 
 #include "UIScreen.h"
 #include <vector>
-
+#include <GLFW/glfw3.h>
+#include "Move.h"
+#include <algorithm>
+#include "GameObject.h"
+#include "Enemy.h"
 
 class Player;
-class Enemy;
 
 enum class TurnState {
     PlayerTurn,
     EnemyTurn,
     BattleOver,
     StartBattle,
+    SelectingTarget,
 };
 
 class BattleManager {
@@ -25,11 +29,17 @@ class BattleManager {
         void nextTurn();
         void playerAction();
         void enemyAction();
+        void selectTarget(GLFWwindow *window, Player *player);
 
         bool checkEnd() const;
 
         Player *getPlayer();
         Enemy *getEnemy();
+
+        void processInputs(GLFWwindow *window, Player *player);
+        void setPendingMove(Move m);
+        void confirmTargets(Player *player);
+
 
 
         //something to deal wioth turn
@@ -45,6 +55,13 @@ class BattleManager {
         size_t currentEnemyIndex;
         size_t currentPlayerIndex;
     
+        int selectedEnemyIndex = 0;
+        std::vector<int> selectedTargets;
+        bool targetConfirmed;
+
+        Move pendingMove;
+        bool hasPendingMove;
+
         void checkBattleOver();
 
 };
