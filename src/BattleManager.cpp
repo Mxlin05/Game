@@ -22,13 +22,13 @@ void BattleManager::startBattle(){
 }
 
 //USE SPEED STATS, NEEED TO CHECK IF PLAYER IS ALIVE
-void BattleManager::nextTurn(){
+bool BattleManager::nextTurn(){
 
-    //checkBattleOver();
+    checkBattleOver();
     if(currState == TurnState::BattleOver){
 
-        //show battle over
-        return;
+        std::cout << "Battle is over, no next turn" << std::endl;
+        return false;
     }
 
     if (currState == TurnState::PlayerTurn)
@@ -44,14 +44,14 @@ void BattleManager::nextTurn(){
         }
 
         currState = TurnState::EnemyTurn;
-        return;
+        return true;
     }
 
     if(currState == TurnState::EnemyTurn){
 
         //THIS WILL BE CHANGED IN THE FURTURE BUT JKUST SKIP FOR NOW
         currState = TurnState::PlayerTurn;
-        return;
+        return true;
 
         std::cout << "Enemy turn, go to Player turn: " << std::endl;
         if(currentEnemyIndex < enemies.size() - 1){
@@ -60,8 +60,9 @@ void BattleManager::nextTurn(){
             currentEnemyIndex = 0;
         }
         currState = TurnState::PlayerTurn;
-        return;
+        return true;
     }
+    return true;
 }
 
 Player* BattleManager::getPlayer(){
@@ -74,9 +75,38 @@ Enemy* BattleManager::getEnemy(){
 }
 
 //check if everyone is dead
-// void BattleManager::checlBattleOver(){
+bool BattleManager::checkBattleOver(){
 
-// }
+    std::cout << "Chjecking if the battle is over" << std::endl;
+    bool allPlayersDead = true;
+    for (auto &p : players) {
+        if (p->stats.health > 0) {
+            allPlayersDead = false;
+            break;
+        }
+    }
+
+    bool allEnemiesDead = true;
+    for(auto &e : enemies){
+        if(e->stats.health > 0){
+            allEnemiesDead =  false;
+            break;
+        }
+    }
+
+    if(allPlayersDead || allEnemiesDead){
+        std::cout << "Battle Over!" << std::endl;
+        currState = TurnState::BattleOver;
+
+        for (auto &Enemy : enemies) {
+            if (Enemy) Enemy->sprite->isSelected = false;
+            if (Enemy) Enemy->sprite->isHovered = false; 
+        }
+        g_uiManager_ptr -> setCurrScreen("StartMenu");
+        return true;
+    }
+    return false;
+}
 
 std::vector<Player*> BattleManager::getAllPlayers(){
     return players;
@@ -133,7 +163,6 @@ void BattleManager::processInputs(int key, Player *player){
         }
     }else if (key == GLFW_KEY_ENTER) {
         std::cout << "confirmed press" << std::endl;
-        targetConfirmed = true;
         confirmTargets(player);
     }
 
@@ -143,6 +172,7 @@ void BattleManager::processInputs(int key, Player *player){
             enemies[i]->sprite->isHovered = (i == selectedEnemyIndex);
         }
     }
+
 }
 
 
@@ -153,7 +183,7 @@ void BattleManager::setPendingMove(Move m) {
 
 void BattleManager::confirmTargets(Player *player){
 
-    if(targetConfirmed == false || hasPendingMove == false){
+    if(hasPendingMove == false){
         std::cout << "FUCKED UP" << std::endl;
         return;
     }
@@ -167,6 +197,8 @@ void BattleManager::confirmTargets(Player *player){
             pendingMove.useMove(*player, static_cast<GameObject&>(*target));        
         }
     }
+    targetConfirmed = true;
+    nextTurn();
 
 }
 

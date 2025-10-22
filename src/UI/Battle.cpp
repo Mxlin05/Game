@@ -306,9 +306,13 @@ void BattleUI::renderText(Render &renderer, Shader &shader, TextRenderer &textRe
     textRenderer.RenderText(buttonText, X, Y, scale, glm::vec3(0.0f, 0.0f, 0.0f), projection);
 }
 
-void BattleUI::onKeyPress(int key) {
+void BattleUI::onKeyPress(int key) 
+{
     if (!active) return;
     
+    if(manager.getCurrentState() == TurnState::BattleOver){
+        endGame();
+    }
     // Check for Escape key to end battle
     if (key == GLFW_KEY_ESCAPE) {
         std::cout << "Escape pressed - ending battle" << std::endl;
@@ -320,7 +324,17 @@ void BattleUI::onKeyPress(int key) {
         
     }
     if (manager.getCurrentState() == TurnState::SelectingTarget) {
-        manager.processInputs(key, manager.getPlayer());        
+        manager.processInputs(key, manager.getPlayer());   
+        
+        if (manager.targetConfirmed) {
+            for (auto &Enemy : units["gen_enemies"]) {
+                if (Enemy) Enemy->sprite->isSelected = false;
+                if (Enemy) Enemy->sprite->isHovered = false; 
+            }
+            currentState = BattleState::MAIN;
+            createButtons();
+            manager.targetConfirmed = false;
+        }
     }
 }
 
@@ -346,9 +360,22 @@ bool BattleUI::isPointInButton(double x, double y) {
     for (auto &button : buttons) {
         if (button.isInside(x, y, false) && button.onClick){
             button.onClick();
-            manager.nextTurn();
+            if(!manager.nextTurn()){
+                return endGame();
+            }
+
             return true;
         }
     }
+    return true;
+}
+
+bool BattleUI::endGame() {
+    std::cout << "Battle ended - returning to main game" << std::endl;
+    for (auto &Enemy : units["gen_enemies"]) {
+        if (Enemy) Enemy->sprite->isSelected = false;
+        if (Enemy) Enemy->sprite->isHovered = false; 
+    }
+    g_uiManager.setCurrScreen("StartMenu"); // Return to main game screen
     return true;
 }

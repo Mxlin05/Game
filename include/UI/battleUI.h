@@ -43,6 +43,7 @@ class BattleUI : public UIScreen{
         bool isActive() const { return active; }
         void hideMenu() { active = false; }
 
+        bool endGame();
     private:
         // Button properties
 

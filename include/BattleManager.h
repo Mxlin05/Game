@@ -1,14 +1,14 @@
 #pragma once
 
-#include "UIScreen.h"
+#include "UImanager.h"
+#include "Global.h"
 #include <vector>
 #include <GLFW/glfw3.h>
 #include "Move.h"
 #include <algorithm>
 #include "GameObject.h"
 #include "Enemy.h"
-
-class Player;
+#include "Player.h"
 
 enum class TurnState {
     PlayerTurn,
@@ -26,7 +26,7 @@ class BattleManager {
         ~BattleManager();
 
         void startBattle();
-        void nextTurn();
+        bool nextTurn();
         void playerAction();
         void enemyAction();
         void selectTarget(Player *player);
@@ -44,6 +44,7 @@ class BattleManager {
 
         TurnState getCurrentState();
 
+        bool targetConfirmed;
 
 
         //something to deal wioth turn
@@ -61,11 +62,10 @@ class BattleManager {
     
         int selectedEnemyIndex = 0;
         std::vector<int> selectedTargets;
-        bool targetConfirmed;
 
         Move pendingMove;
         bool hasPendingMove;
 
-        void checkBattleOver();
+        bool checkBattleOver();
 
 };

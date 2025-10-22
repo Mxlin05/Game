@@ -5,6 +5,13 @@ Enemy::Enemy(std::string name, Sprite *sprite, glm::vec2 position, glm::vec2 siz
     : GameObject(sprite, position, size, rotation), name(name), patrolStart(patrolStart), patrolEnd(patrolEnd), speed(speed), dectectionRange(detectionRange) {
     state = AIState::Idle;
     registerObjectType("enemy");
+    updateHealth(100);
+    updatePhysicalArmor(10);
+    updateMagicArmor(10);
+    updateBattleSpeed(10);
+    updatePhysicalAttack(10);
+    updateMagicAttack(10);
+
 }
 
 Enemy::~Enemy() {
