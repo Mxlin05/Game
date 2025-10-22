@@ -29,16 +29,18 @@ class BattleManager {
         void nextTurn();
         void playerAction();
         void enemyAction();
-        void selectTarget(GLFWwindow *window, Player *player);
+        void selectTarget(Player *player);
 
         bool checkEnd() const;
 
         Player *getPlayer();
         Enemy *getEnemy();
 
-        void processInputs(GLFWwindow *window, Player *player);
+        void processInputs(int key, Player *player);
         void setPendingMove(Move m);
         void confirmTargets(Player *player);
+
+        TurnState getCurrentState();
 
 
 

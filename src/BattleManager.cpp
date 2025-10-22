@@ -80,27 +80,36 @@ Enemy* BattleManager::getEnemy(){
 // }
 
 
-void BattleManager::selectTarget(GLFWwindow *window, Player *player){
+void BattleManager::selectTarget(Player *player){
 
     currState = TurnState::SelectingTarget;
     int selectedEnemyIndex = 0;
     selectedTargets.clear();
     targetConfirmed = false;
-    processInputs(window, player);
 
 }
 
-void BattleManager::processInputs(GLFWwindow *window, Player *player){
+void BattleManager::processInputs(int key, Player *player){
+
+    std::cout << "Selecting targets" << std::endl;
     if (currState != TurnState::SelectingTarget) return;
 
 
-    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-        if (selectedEnemyIndex > 0)
+    if (key == GLFW_KEY_LEFT) {
+        if (selectedEnemyIndex > 0){
+            std::cout << "going down 1" << std::endl;
             selectedEnemyIndex--;
-    } else if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-        if (selectedEnemyIndex < enemies.size() - 1)
+        }
+        std::cout << "registered press" << std::endl;
+    } else if (key == GLFW_KEY_RIGHT) {
+        if (selectedEnemyIndex < enemies.size() - 1){
+            std::cout << "going up one" << std::endl;
             selectedEnemyIndex++;
-    } else if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+        }
+
+        std::cout << "registered press" << std::endl;
+    } else if (key == GLFW_KEY_SPACE) {
+        std::cout << "registered spcawe press" << std::endl;
         auto it = std::find(selectedTargets.begin(), selectedTargets.end(), selectedEnemyIndex);
         if (it == selectedTargets.end()) {
             selectedTargets.push_back(selectedEnemyIndex);
@@ -109,7 +118,8 @@ void BattleManager::processInputs(GLFWwindow *window, Player *player){
             selectedTargets.erase(it);
             std::cout << "Enemy " << selectedEnemyIndex << " deselected.\n";
         }
-    }else if (glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS) {
+    }else if (key == GLFW_KEY_ENTER) {
+        std::cout << "confirmed press" << std::endl;
         targetConfirmed = true;
         confirmTargets(player);
     }
@@ -137,4 +147,8 @@ void BattleManager::confirmTargets(Player *player){
         }
     }
 
+}
+
+TurnState BattleManager::getCurrentState(){
+    return currState;
 }
