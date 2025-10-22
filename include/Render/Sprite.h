@@ -13,6 +13,7 @@ class Sprite {
         glm::vec2 size;
         
         void draw(int windowWidth, int windowHeight, glm::vec2 position, glm::vec2 size, glm::vec2 rotation) const;
+        void draw_battle(int windowWidth, int windowHeight, glm::vec2 position, glm::vec2 size, glm::vec2 rotation, bool isPlayer) const;
 
 
     private:

@@ -79,6 +79,14 @@ Enemy* BattleManager::getEnemy(){
 
 // }
 
+std::vector<Player*> BattleManager::getAllPlayers(){
+    return players;
+}
+
+std::vector<Enemy*> BattleManager::getAllEnemies(){
+    return enemies;
+}
+
 
 void BattleManager::selectTarget(Player *player){
 

@@ -50,6 +50,7 @@ class Player : public GameObject{
         void buffStat(std::vector<int> buffStats) override;
         void debuffStat(std::vector<int> buffStats) override;
         void heal(int heal) override;
+        void setPosition(const glm::vec2& position) override;
 
 
 };

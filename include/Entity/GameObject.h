@@ -45,6 +45,7 @@ class GameObject{
         ~GameObject();
 
         virtual void draw(int windowWidth, int windowHeight) const;
+        virtual void draw_battle(int windowWidth, int windowHeight, bool isPlayer) const;
         //virtual void update(float deltaTime ......... add more);
         
         virtual void setPosition(const glm::vec2& position);

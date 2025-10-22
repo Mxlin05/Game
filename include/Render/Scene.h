@@ -9,16 +9,17 @@ class Scene {
     
     public:
         TileMap *tileMap;
-        Player *player;
+        std::vector <Player*>players;
 
         std::vector<Enemy *> Enemies;
         //need to add other rhings based on what is needed per level
         std::vector<GameObject *> objects;
 
-        Scene(Player *player, TileMap *tileMap);
+        Scene(std::vector<Player*> players = {}, TileMap *tileMap = nullptr, std::vector<Enemy*> enemies = {});
         ~Scene();
 
-        void draw(Render *renderer, Shader *shader, int windowWidth, int windowHeight, int tileSize) const;
+        void draw(Render *renderer, Shader *shader, int windowWidth, int windowHeight, int tileSize, float startX, float startY) const;
+        void draw_battle(Render *renderer, Shader *shader, int windowWidth, int windowHeight, int tileSize, float startX, float startY) const;
         void addEnemy(Enemy *enemy);
         void addObjects(GameObject *object);
 };

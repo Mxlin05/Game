@@ -35,6 +35,8 @@ class BattleManager {
 
         Player *getPlayer();
         Enemy *getEnemy();
+        std::vector<Player*> getAllPlayers();
+        std::vector<Enemy*> getAllEnemies();
 
         void processInputs(int key, Player *player);
         void setPendingMove(Move m);

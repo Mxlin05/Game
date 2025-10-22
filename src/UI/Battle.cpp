@@ -16,7 +16,7 @@ BattleUI::BattleUI(int windowWidth, int windowHeight, std::vector<Player *> play
     active = true;
     tileMaps["generic_battle_map"] = new TileMap("res/battle_tilemap.csv");
     tileMapShader = new Shader("res/shaders/basicTest.glsl");
-
+    unitShader = new Shader("res/shaders/basicTest.glsl");
 
     statsWidth = 150.0f;
     statsHeight = 125.0f;
@@ -62,6 +62,9 @@ void BattleUI::createButtons(){
     buttons.clear();
 
     switch(currentState) {
+        case BattleState::TRAVEL:
+            createTravelButtons();
+            break;
         case BattleState::MAIN:
             createMainButtons();
             break;
@@ -78,19 +81,25 @@ void BattleUI::createMainButtons(){
 
     buttons.clear();
 
+    buttons.emplace_back(windowWidth / 2.0f - buttonWidth / 2.0f, startY + 120.0f, buttonWidth, buttonHeight, 0.5, "Travel");
     buttons.emplace_back(windowWidth / 2.0f - buttonWidth / 2.0f, startY + 60.0f, buttonWidth, buttonHeight, 0.5, "Attack");
     buttons.emplace_back(windowWidth / 2.0f - buttonWidth / 2.0f, startY, buttonWidth, buttonHeight, 0.5, "Defend");
     buttons.emplace_back(windowWidth / 2.0f - buttonWidth / 2.0f, startY - 60.0f, buttonWidth, buttonHeight, 0.5, "Run");
 
 
     // Assign callbacks
-    buttons[0].onClick = [this]() { 
+    buttons[0].onClick = [this]() {
+        std::cout << "Travel!\n";
+        currentState = BattleState::TRAVEL;
+        createButtons();
+    };
+    buttons[1].onClick = [this]() { 
         std::cout << "Attack!\n";
         currentState = BattleState::ATTACK;
         createButtons(); 
     };
-    buttons[1].onClick = []() { std::cout << "Defend!\n"; };
-    buttons[2].onClick = []() { std::cout << "Run Away!\n"; };
+    buttons[2].onClick = []() { std::cout << "Defend!\n"; };
+    buttons[3].onClick = []() { std::cout << "Run Away!\n"; };
 }
 
 void BattleUI::createAttackButtons(){
@@ -158,19 +167,38 @@ void BattleUI::createAttackButtons(){
     
 }
 
+void BattleUI::createTravelButtons(){
+    buttons.clear();
+    std::cout << "Creating travel buttons\n";
+    std::cout << "Travel mode activated - click anywhere to see coordinates\n";
+}
+
 void BattleUI::update(float deltaTime) {
     // No updates needed for battle screen
 }
 
 void BattleUI::init() {
     createButtons();
+    
+    // Convert Player* to GameObject* for storage
+    std::vector<Player*> players = manager.getAllPlayers();
+    units["curr_players"] = std::vector<GameObject*>(players.begin(), players.end());
+    
+    std::cout << "curr_players size: " << units["curr_players"].size() << std::endl;
+    
+    // Convert Enemy* to GameObject* for storage
+    std::vector<Enemy*> enemies = manager.getAllEnemies();
+    units["gen_enemies"] = std::vector<GameObject*>(enemies.begin(), enemies.end());
+    std::cout << "gen_enemies size: " << units["gen_enemies"].size() << std::endl;
 
+    scene = new Scene(players, tileMaps["generic_battle_map"], enemies);
+    
+    
     manager.startBattle();
 }
 
 void BattleUI::renderMap(Render &renderer, Shader &shader) {
     // Set up projection matrix for full screen coverage
-    TileMap* map = tileMaps["generic_battle_map"];
     glm::mat4 projection = glm::ortho(0.0f, (float)windowWidth, 0.0f, (float)windowHeight);
     glm::mat4 view = glm::mat4(1.0f);
     glm::mat4 model = glm::mat4(1.0f);
@@ -207,7 +235,7 @@ void BattleUI::renderMap(Render &renderer, Shader &shader) {
     renderer.Draw(renderer.vao, renderer.ib, shader);
     
     // 3. Draw the tile map in the 70% area
-    if (map && tileMapShader) {
+    if (scene && tileMapShader && unitShader) {
         // std::cout << "render map" << std::endl;
         
         // Use full screen projection matrix and rely on startX/startY parameters
@@ -221,9 +249,11 @@ void BattleUI::renderMap(Render &renderer, Shader &shader) {
         // Draw the tile map in the 70% area
         // Start drawing from the bottom of the 70% area (overlayY)
         // std::cout << "Debug - Drawing tile map at startX: 0, startY: " << (int)overlayY << std::endl;
-        map->draw(renderer, *tileMapShader, windowWidth, (int)overlayHeight, 14, 0, (int)overlayY);
+        
+        scene->draw_battle(&renderer, tileMapShader, windowWidth, windowHeight, 32, 0.0f, overlayY);
     }
 }
+
 void BattleUI::renderStats(Render &renderer, Shader &shader, TextRenderer &textRenderer, float statsX, float statsY) {
     // Set up projection matrix for UI rendering
     glm::mat4 projection = glm::ortho(0.0f, (float)windowWidth, 0.0f, (float)windowHeight);
@@ -291,8 +321,18 @@ void BattleUI::onMouseClick(double x, double y) {
     
     // Convert GLFW coordinates (top-left origin) to OpenGL coordinates (bottom-left origin)
     double openGLY = windowHeight - y;
+    
+    // Store mouse coordinates
+    mouseCoordinates = glm::vec2(x, openGLY);
+    
+    // Print coordinates when in travel state
+    if (currentState == BattleState::TRAVEL) {
+        std::cout << "Travel mode - Mouse click at coordinates: (" << x << ", " << openGLY << ")" << std::endl;
+    }
+    
     bool clickedOnButton = isPointInButton(x, openGLY);
 }
+
 
 bool BattleUI::isPointInButton(double x, double y) {
     for (auto &button : buttons) {

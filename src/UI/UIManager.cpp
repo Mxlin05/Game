@@ -12,11 +12,17 @@ void UIManager::addScreen(const std::string &name, std::unique_ptr<UIScreen> scr
     screens[name] = std::move(screen);
     if(currScreen == nullptr){
         currScreen = screens[name].get();
+        currScreenName = name;
     }
 };
 
 void UIManager::setCurrScreen(const std::string &name){
     currScreen = screens[name].get();
+    currScreenName = name;
+}
+
+std::string UIManager::getCurrScreenName() const {
+    return currScreenName;
 }
 
 void UIManager::update(float deltaTime){
