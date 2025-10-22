@@ -30,6 +30,8 @@ class BattleManager {
 
         Player *getPlayer();
         Enemy *getEnemy();
+        std::vector<Player*> getAllPlayers();
+        std::vector<Enemy*> getAllEnemies();
 
 
         //something to deal wioth turn

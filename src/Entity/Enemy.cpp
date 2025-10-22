@@ -125,6 +125,11 @@ glm::vec2 Enemy::tileToWorld(const glm::ivec2& tile, float tileSize) {
     return glm::vec2(tile.x * tileSize + tileSize / 2, tile.y * tileSize + tileSize / 2);
 }
 
+void Enemy::setPosition(const glm::vec2& position){
+    this->position = position;
+}
+
+
 void Enemy::updateHealth(int h) {
     stats.health = h;
 }

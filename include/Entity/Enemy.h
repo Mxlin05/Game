@@ -54,7 +54,7 @@ class Enemy : public GameObject {
         }
 
 
-        
+        void setPosition(const glm::vec2& position) override;
         void takeDamage(int damage, std::string type) override;
         void buffStat(std::vector<int> buffStats) override;
         void debuffStat(std::vector<int> buffStats) override;

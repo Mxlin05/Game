@@ -18,6 +18,10 @@ void GameObject::draw(int windowWidth, int windowHeight) const {
     sprite -> draw(windowWidth, windowHeight, position, size, rotation);
 }
 
+void GameObject::draw_battle(int windowWidth, int windowHeight, bool isPlayer) const {
+    sprite -> draw_battle(windowWidth, windowHeight, position, size, rotation, isPlayer);
+}
+
 void GameObject::setPosition(const glm::vec2& position) {
     this->position = position;
 }

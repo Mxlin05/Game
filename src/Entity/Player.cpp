@@ -85,6 +85,10 @@ glm::vec2 Player::getPosition() const {
     return position;
 }
 
+void Player::setPosition(const glm::vec2& position){
+    this->position = position;
+}
+
 void Player::updateHealth(int h){
     stats.health = h;
 }
