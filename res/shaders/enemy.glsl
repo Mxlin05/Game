@@ -36,6 +36,6 @@ void main() {
     } else if (isSelected) {
         FragColor = vec4(0.7, 0.7, 0.0, 1.0); // Darker yellow
     } else {
-        FragColor = texture(uTexture, uv);
+        FragColor = texColor;
     }
 }

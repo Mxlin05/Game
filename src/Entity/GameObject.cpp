@@ -18,6 +18,10 @@ void GameObject::draw(int windowWidth, int windowHeight) const {
     sprite -> draw(windowWidth, windowHeight, position, size, rotation);
 }
 
+void GameObject::draw_battle(int windowWidth, int windowHeight, bool isPlayer) const {
+    sprite -> draw_battle(windowWidth, windowHeight, position, size, rotation, isPlayer);
+}
+
 void GameObject::setPosition(const glm::vec2& position) {
     this->position = position;
 }
@@ -51,19 +55,3 @@ std::string GameObject::getObjectType() const {
 }
 
 
-void GameObject::takeDamage(int damage, std::string type)  {
-    int damageTaken = 0; 
-    if(type == "physical"){
-        damageTaken = damage - stats.armor;
-        std::cout << "phys damage: " << damageTaken << std::endl;
-    }else if(type == "magic"){
-        damageTaken = damage - stats.magicArmor;
-        std::cout << "magic damage: " << damageTaken << std::endl;
-    }else{
-        std::cout << "NEITHER DAMAGE TYPE, WE FUCKED UP" << std::endl;
-    }
-    
-    stats.health = stats.health - damageTaken;
-    std::cout << "Player health: " << stats.health << std::endl;
-    return;
-}

@@ -15,9 +15,10 @@ class Player : public GameObject{
         //Inventory Inventory;
         glm::vec2 velocity;
         float speed;
-        Player(Sprite *sprite, glm::vec2 position, glm::vec2 size, glm::vec2 rotation);
+        Player(std::string name, Sprite *sprite, glm::vec2 position, glm::vec2 size, glm::vec2 rotation);
         ~Player();
 
+        std::string name;
 
         //add stats
         Stats stats;
@@ -50,6 +51,7 @@ class Player : public GameObject{
         void buffStat(std::vector<int> buffStats) override;
         void debuffStat(std::vector<int> buffStats) override;
         void heal(int heal) override;
+        void setPosition(const glm::vec2& position) override;
 
 
 };

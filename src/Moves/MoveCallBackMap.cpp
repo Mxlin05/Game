@@ -12,14 +12,32 @@ void initializeMoveCallbacks(std::vector<Move>& moves) {
         std::cout << "Move name: " << m.name << std::endl;
         moveCallbacks[m.name] = [m](GameObject& user, GameObject& target) {
             int damage = m.power; 
-            
-            if(m.damageType == "physical"){
-                damage = damage + user.stats.physAttack;
-                std::cout << "phys attack power: " << damage << std::endl;
-            }else{
-                damage = damage + user.stats.magicAttack;
-                std::cout << "magic attack power: " << damage << std::endl;
+            std::cout << "move attack power: " << damage << std::endl;
 
+            if (Player* pUser = dynamic_cast<Player*>(&user)) {
+                if(m.damageType == "physical"){
+                    damage = damage + pUser -> stats.physAttack;
+                    std::cout << " user phys attack power: " << user.stats.physAttack << std::endl;
+                    std::cout << "phys attack power: " << damage << std::endl;
+                }else{
+                    damage = damage + pUser -> stats.magicAttack;
+                    std::cout << " user phys magic power: " << user.stats.magicAttack << std::endl;
+                    std::cout << "magic attack power: " << damage << std::endl;
+
+                }
+            }
+                // Attempt to downcast user to Enemy
+            else if (Enemy* eUser = dynamic_cast<Enemy*>(&user)) {
+                if(m.damageType == "physical"){
+                    damage = damage + eUser -> stats.physAttack;
+                    std::cout << " user phys attack power: " << user.stats.physAttack << std::endl;
+                    std::cout << "phys attack power: " << damage << std::endl;
+                }else{
+                    damage = damage + eUser -> stats.magicAttack;
+                    std::cout << " user phys magic power: " << user.stats.magicAttack << std::endl;
+                    std::cout << "magic attack power: " << damage << std::endl;
+
+                }
             }
 
             std::cout << "used Cut" << std::endl;

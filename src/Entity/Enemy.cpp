@@ -1,10 +1,17 @@
 #include "Enemy.h"
 
 
-Enemy::Enemy(Sprite *sprite, glm::vec2 position, glm::vec2 size, glm::vec2 rotation, glm::vec2 patrolStart, glm::vec2 patrolEnd, float speed, float detectionRange) 
-    : GameObject(sprite, position, size, rotation), patrolStart(patrolStart), patrolEnd(patrolEnd), speed(speed), dectectionRange(detectionRange) {
+Enemy::Enemy(std::string name, Sprite *sprite, glm::vec2 position, glm::vec2 size, glm::vec2 rotation, glm::vec2 patrolStart, glm::vec2 patrolEnd, float speed, float detectionRange, std::vector<Move> moves) 
+    : GameObject(sprite, position, size, rotation), name(name), moves(moves), patrolStart(patrolStart), patrolEnd(patrolEnd), speed(speed), dectectionRange(detectionRange) {
     state = AIState::Idle;
     registerObjectType("enemy");
+    updateHealth(100);
+    updatePhysicalArmor(10);
+    updateMagicArmor(10);
+    updateBattleSpeed(10);
+    updatePhysicalAttack(10);
+    updateMagicAttack(10);
+
 }
 
 Enemy::~Enemy() {
@@ -14,6 +21,10 @@ void Enemy::updateAABB(){
     if (aabbID >= 0){
         Physics::updateAABB(aabbID, position, size);
     }
+}
+
+void Enemy::initMoves(){
+    initializeMoveCallbacks(moves);
 }
 
 void Enemy::update(float deltaTime, const glm::vec2 &playerPos) {
@@ -125,6 +136,11 @@ glm::vec2 Enemy::tileToWorld(const glm::ivec2& tile, float tileSize) {
     return glm::vec2(tile.x * tileSize + tileSize / 2, tile.y * tileSize + tileSize / 2);
 }
 
+void Enemy::setPosition(const glm::vec2& position){
+    this->position = position;
+}
+
+
 void Enemy::updateHealth(int h) {
     stats.health = h;
 }
@@ -151,7 +167,21 @@ void Enemy::updateMagicAttack(int a){
 
 void Enemy::takeDamage(int damage, std::string type) {
 
-    GameObject::takeDamage(damage, type);
+    std::cout << "Enemy health before damage: " << stats.health << std::endl;
+    int damageTaken = 0; 
+    if(type == "physical"){
+        damageTaken = damage - stats.armor;
+        std::cout << "phys damage: " << damageTaken << std::endl;
+    }else if(type == "magic"){
+        damageTaken = damage - stats.magicArmor;
+        std::cout << "magic damage: " << damageTaken << std::endl;
+    }else{
+        std::cout << "NEITHER DAMAGE TYPE, WE FUCKED UP" << std::endl;
+    }
+    
+    stats.health = stats.health - damageTaken;
+    std::cout << "Enemy health: " << stats.health << std::endl;
+    return;
 
 }
 

@@ -2,6 +2,8 @@
 #include "GameObject.h"
 #include "glm/glm.hpp"
 #include "Pathfind.h"
+#include "Move.h"
+#include "MoveCallBackMap.h"
 
 enum class AIState {
     Idle,
@@ -23,12 +25,13 @@ class Enemy : public GameObject {
         glm::vec2 patrolStart;
         glm::vec2 patrolEnd;
         
-
+        std::string name;
 
         //add stats
         Stats stats;
+        std::vector<Move> moves;
 
-        Enemy(Sprite *sprite, glm::vec2 position, glm::vec2 size, glm::vec2 rotation, glm::vec2 patrolStart, glm::vec2 patrolEnd, float speed, float detectionRange);
+        Enemy(std::string name, Sprite *sprite, glm::vec2 position, glm::vec2 size, glm::vec2 rotation, glm::vec2 patrolStart, glm::vec2 patrolEnd, float speed, float detectionRange, std::vector<Move> moves = {});
         ~Enemy();
 
         void update(float deltaTime, const glm::vec2& playerPosition);
@@ -43,6 +46,8 @@ class Enemy : public GameObject {
         void updatePhysicalAttack(int a) override;
         void updateMagicAttack(int a) override;
 
+        void initMoves();
+
         glm::ivec2 worldToTile(const glm::vec2& pos, float tileSize);
         glm::vec2 tileToWorld(const glm::ivec2& tile, float tileSize);
 
@@ -54,7 +59,7 @@ class Enemy : public GameObject {
         }
 
 
-        
+        void setPosition(const glm::vec2& position) override;
         void takeDamage(int damage, std::string type) override;
         void buffStat(std::vector<int> buffStats) override;
         void debuffStat(std::vector<int> buffStats) override;

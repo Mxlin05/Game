@@ -1,5 +1,6 @@
 #include "BattleManager.h"
 #include <iostream>
+#include <random>
 
 BattleManager::BattleManager(std::vector<Player*> players, std::vector<Enemy*> enemies) :
     players(players), enemies(enemies), currState(TurnState::StartBattle), currentEnemyIndex(0), currentPlayerIndex(0)
@@ -14,21 +15,28 @@ BattleManager::~BattleManager(){
 
 //use SPEED STAT
 void BattleManager::startBattle(){
-    currState = TurnState::PlayerTurn;
+    currState = TurnState::StartBattle;
 
     currentEnemyIndex = 0;
     currentPlayerIndex = 0;
+
+    nextTurn();
     
 }
 
 //USE SPEED STATS, NEEED TO CHECK IF PLAYER IS ALIVE
-void BattleManager::nextTurn(){
+bool BattleManager::nextTurn(){
 
-    //checkBattleOver();
+    checkBattleOver();
+
+    if(currState == TurnState::StartBattle){
+        currState = TurnState::PlayerTurn;
+        return true;
+    }
     if(currState == TurnState::BattleOver){
 
-        //show battle over
-        return;
+        std::cout << "Battle is over, no next turn" << std::endl;
+        return false;
     }
 
     if (currState == TurnState::PlayerTurn)
@@ -44,15 +52,13 @@ void BattleManager::nextTurn(){
         }
 
         currState = TurnState::EnemyTurn;
-        return;
+        return true;
     }
 
+    //THIS SHOULD BE  SEPERATED INTO ENEMY ACTION AND PLAYER ACTION
     if(currState == TurnState::EnemyTurn){
 
         //THIS WILL BE CHANGED IN THE FURTURE BUT JKUST SKIP FOR NOW
-        currState = TurnState::PlayerTurn;
-        return;
-
         std::cout << "Enemy turn, go to Player turn: " << std::endl;
         if(currentEnemyIndex < enemies.size() - 1){
             currentEnemyIndex = currentEnemyIndex + 1;
@@ -60,12 +66,12 @@ void BattleManager::nextTurn(){
             currentEnemyIndex = 0;
         }
         currState = TurnState::PlayerTurn;
-        return;
+        return true;
     }
+    return true;
 }
 
 Player* BattleManager::getPlayer(){
-    std::cout << "Current Player Index: " << currentPlayerIndex << std::endl;
     return players[currentPlayerIndex];
 }
 
@@ -75,8 +81,160 @@ Enemy* BattleManager::getEnemy(){
 }
 
 //check if everyone is dead
-// void BattleManager::checlBattleOver(){
+bool BattleManager::checkBattleOver(){
 
-// }
+    std::cout << "Chjecking if the battle is over" << std::endl;
+    bool allPlayersDead = true;
+    for (auto &p : players) {
+        if (p->stats.health > 0) {
+            allPlayersDead = false;
+            break;
+        }
+    }
+
+    bool allEnemiesDead = true;
+    for(auto &e : enemies){
+        if(e->stats.health > 0){
+            allEnemiesDead =  false;
+            break;
+        }
+    }
+
+    if(allPlayersDead || allEnemiesDead){
+        std::cout << "Battle Over!" << std::endl;
+        currState = TurnState::BattleOver;
+
+        for (auto &Enemy : enemies) {
+            if (Enemy) Enemy->sprite->isSelected = false;
+            if (Enemy) Enemy->sprite->isHovered = false; 
+        }
+        g_uiManager_ptr -> setCurrScreen("StartMenu");
+        return true;
+    }
+    return false;
+}
+
+std::vector<Player*> BattleManager::getAllPlayers(){
+    return players;
+}
+
+std::vector<Enemy*> BattleManager::getAllEnemies(){
+    return enemies;
+}
 
 
+void BattleManager::selectTarget(Player *player){
+
+    currState = TurnState::SelectingTarget;
+    int selectedEnemyIndex = 0;
+    selectedTargets.clear();
+    targetConfirmed = false;
+
+}
+
+void BattleManager::processInputs(int key, Player *player){
+
+    std::cout << "Selecting targets, start of process inputs" << std::endl;
+    if (currState != TurnState::SelectingTarget) return;
+
+    for (auto* e : enemies)
+        e->sprite->isHovered = false;
+
+    if (key == GLFW_KEY_LEFT) {
+        if (selectedEnemyIndex > 0){
+            std::cout << "going down 1" << std::endl;
+            selectedEnemyIndex--;
+            std::cout << "Name: " << enemies[selectedEnemyIndex]->name << std::endl;
+        }
+        std::cout << "registered press" << std::endl;
+    } else if (key == GLFW_KEY_RIGHT) {
+        if (selectedEnemyIndex < enemies.size() - 1){
+            std::cout << "going up one" << std::endl;
+            selectedEnemyIndex++;
+            std::cout << "Name: " << enemies[selectedEnemyIndex]->name << std::endl;
+        }
+
+        std::cout << "registered press" << std::endl;
+    } else if (key == GLFW_KEY_SPACE) {
+        std::cout << "registered spcawe press" << std::endl;
+        auto it = std::find(selectedTargets.begin(), selectedTargets.end(), selectedEnemyIndex);
+        if (it == selectedTargets.end()) {
+            selectedTargets.push_back(selectedEnemyIndex);
+            std::cout << "Enemy " << selectedEnemyIndex << " selected.\n";
+            enemies[selectedEnemyIndex]->sprite->isSelected = true;
+        } else {
+            selectedTargets.erase(it);
+            std::cout << "Enemy " << selectedEnemyIndex << " deselected.\n";
+            enemies[selectedEnemyIndex]->sprite->isSelected = false;
+        }
+    }else if (key == GLFW_KEY_ENTER) {
+        std::cout << "confirmed press" << std::endl;
+        confirmTargets(player);
+    }
+
+    if (selectedEnemyIndex >= 0 && selectedEnemyIndex < enemies.size())
+    {
+        for (size_t i = 0; i < enemies.size(); ++i) {
+            enemies[i]->sprite->isHovered = (i == selectedEnemyIndex);
+        }
+    }
+
+}
+
+
+void BattleManager::setPendingMove(Move m) {
+    pendingMove = m;
+    hasPendingMove = true;
+}
+
+void BattleManager::confirmTargets(Player *player){
+
+    if(hasPendingMove == false){
+        std::cout << "FUCKED UP" << std::endl;
+        return;
+    }
+
+    for (int idx : selectedTargets) {
+        if (idx >= 0 && idx < enemies.size()) {
+            Enemy* target = enemies[idx];
+            std::cout << "Using " << pendingMove.name 
+                      << " on enemy "  << std::endl;
+            std::cout << "Name: " << target->name << std::endl;
+            pendingMove.useMove(*player, static_cast<GameObject&>(*target));        
+        }
+    }
+    targetConfirmed = true;
+    nextTurn();
+
+}
+
+TurnState BattleManager::getCurrentState(){
+    return currState;
+}
+
+void BattleManager::playerAction(int key, Player *player){
+    //processInputs(key, *player);
+}
+
+void BattleManager::enemyAction(){
+
+    std::cout << "In enemy action" << std::endl;
+    std::random_device rd;
+    std::mt19937 gen(rd());
+
+    std::uniform_int_distribution<> distrib(1, enemies[currentEnemyIndex] -> moves.size() - 1);
+    int moveIndex = distrib(gen);
+
+    std::uniform_int_distribution<> targetDistrib(0, players.size() - 1);
+    int targetIndex = targetDistrib(gen);
+
+    Enemy *enemy = enemies[currentEnemyIndex];
+    Move enemyMove = enemies[currentEnemyIndex] -> moves[moveIndex];
+    Player* targetPlayer = players[targetIndex];
+
+    std::cout << "Enemy " << enemies[currentEnemyIndex]->name << " uses " << enemyMove.name 
+              << " on Player " << targetPlayer->name << std::endl;
+    enemyMove.useMove(*enemy, static_cast<GameObject&>(*targetPlayer));
+
+    nextTurn();
+}

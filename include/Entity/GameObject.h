@@ -24,13 +24,14 @@ class GameObject{
 
         Stats stats;
 
+
         virtual void updateHealth(int) {}
         virtual void updatePhysicalArmor(int) {}
         virtual void updateMagicArmor(int) {}
         virtual void updateBattleSpeed(int) {}
         virtual void updatePhysicalAttack(int) {}
         virtual void updateMagicAttack(int) {}
-        virtual void takeDamage(int damage, std::string type);
+        virtual void takeDamage(int damage, std::string type) {}
         virtual void buffStat(std::vector<int>) {}
         virtual void debuffStat(std::vector<int>) {}
         virtual void heal(int) {}
@@ -45,6 +46,7 @@ class GameObject{
         ~GameObject();
 
         virtual void draw(int windowWidth, int windowHeight) const;
+        virtual void draw_battle(int windowWidth, int windowHeight, bool isPlayer) const;
         //virtual void update(float deltaTime ......... add more);
         
         virtual void setPosition(const glm::vec2& position);

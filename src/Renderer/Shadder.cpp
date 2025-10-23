@@ -96,3 +96,4 @@ unsigned int Shader::compileShader(GLenum type, const char *source){
 
     return shader;
 }
+

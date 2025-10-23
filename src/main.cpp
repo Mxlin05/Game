@@ -163,6 +163,7 @@ int main()
     Shader test("res/shaders/basicTest.glsl");
     Shader uiShader("res/shaders/ui.glsl");
     Shader textShader("res/shaders/text.glsl");
+    Shader enemyShader("res/shaders/enemy.glsl");
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -171,10 +172,10 @@ int main()
     Texture texture1("res/textures/lilla_fat_cheeks.png");
     Texture texture2("res/textures/test1.png");
 
-    Sprite sprite1(&texture1, &test, &renderer);
+    Sprite sprite1(&texture1, &test, &renderer, SpriteType::Enemy);
     Sprite sprite2(&texture2, &test, &renderer);
 
-    Player player1(&sprite2, glm::vec2(0.0f, 0.0f), glm::vec2(100.0f, 100.0f), glm::vec2(0.0f));
+    Player player1("player1", &sprite2, glm::vec2(0.0f, 0.0f), glm::vec2(100.0f, 100.0f), glm::vec2(0.0f));
 
     //THIS IS FOR TESTING PRUPOSES, WE CAN MAKE A GLOBAL INSTANCE OF PLAYER VECTOR I THE FUTURE
     std::vector<Move> playerMoves = loadMovesFromCSV("res/moves/PhysicalAttacks.csv");
@@ -185,17 +186,25 @@ int main()
     std::vector<Player *> players;
     players.push_back(&player1);
 
-
+    //do not have 2 copoies of same moves, just use same this is for test
     g_player = &player1; // Set global player pointer
-    Enemy obj2(&sprite1, glm::vec2(150.0f, 300.0f), glm::vec2(100.0f, 100.0f), glm::vec2(0.0f),  glm::vec2(150.0f, 300.0f), glm::vec2(400.0f), 50.0f, 300.0f);
+    Enemy obj2("Enemy1", &sprite1, glm::vec2(150.0f, 300.0f), glm::vec2(100.0f, 100.0f), glm::vec2(0.0f),  glm::vec2(150.0f, 300.0f), glm::vec2(400.0f), 50.0f, 300.0f);
+    std::vector<Move> enemyMoves = loadMovesFromCSV("res/moves/PhysicalAttacks.csv");
+    obj2.moves = enemyMoves;
+    obj2.initMoves();
+    
     Npc npc1(&sprite1, glm::vec2(300.0f, 200.0f), glm::vec2(80.0f, 80.0f), glm::vec2(0.0f)); 
+
+    std::vector<Enemy*> enemies;
+    enemies.push_back(&obj2);
+
 
     TileMap tileMap("res/tilemap.csv");
     std::vector<int> walkGrid = tileMap.GenerateWalkabilityGrid();
     tileMap.printWalkabilityGrid(walkGrid, tileMap.width, tileMap.height);
     PathFind pathFinder(tileMap.width, tileMap.height, walkGrid);
     obj2.pathFinder = &pathFinder;
-    Scene scene(&player1, &tileMap);
+    Scene scene(players, &tileMap, enemies);
     scene.addEnemy(&obj2);
     
     // Test object type mapping - COMMENTED OUT (working correctly)
@@ -221,7 +230,7 @@ int main()
 
     // Initialize UI system
     g_uiManager.addScreen("StartMenu", std::make_unique<StartMenuScreen>(windowWidth, windowHeight));
-    g_uiManager.addScreen("Battle", std::make_unique<BattleUI>(windowWidth, windowHeight, players));
+    g_uiManager.addScreen("Battle", std::make_unique<BattleUI>(windowWidth, windowHeight, players, enemies));
     g_uiManager.setCurrScreen("StartMenu");
     
     float lastTime = glfwGetTime();
@@ -248,10 +257,13 @@ int main()
         // glm::mat4 projection = glm::ortho(0.0f, (float)windowWidth, (float)windowHeight, 0.0f, -1.0f, 1.0f);
         test.setUniformMat4f("uView", glm::value_ptr(view));
         test.setUniformMat4f("uProjection", glm::value_ptr(projection));
-        scene.draw(&renderer, &test, windowWidth, windowHeight, 32);
+        scene.draw(&renderer, &test, windowWidth, windowHeight, 32, 0.0f, 0.0f);
 
-        for (auto& enemy : scene.Enemies) {
-            enemy->update(deltaTime, player1.getPosition());
+        // Only update enemies when not in battle screen
+        if(g_uiManager_ptr->currScreen->active == false || g_uiManager_ptr->getCurrScreenName() != "Battle"){
+            for (auto& enemy : scene.Enemies) {
+                enemy->update(deltaTime, player1.getPosition());
+            }
         }
         glGetError();
         

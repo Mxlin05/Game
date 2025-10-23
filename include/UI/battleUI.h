@@ -6,6 +6,10 @@
 #include "Button.h"
 #include <vector>
 #include "BattleManager.h"
+#include "Player.h"
+#include "Enemy.h"
+#include "Scene.h"
+#include <GLFW/glfw3.h>
 
 
 enum class BattleState {
@@ -13,15 +17,20 @@ enum class BattleState {
     TRAVEL, 
     ATTACK,
     MAGIC,
-    ITEM
+    ITEM, 
+    ENEMYTURN,
 };
+
 #include "TileMap.h"
 #include "unordered_map"
 
 class BattleUI : public UIScreen{
     int windowWidth, windowHeight;
     std::unordered_map<std::string, TileMap*> tileMaps;
+    std::unordered_map<std::string, std::vector<GameObject*>> units;
     Shader *tileMapShader;
+    Shader *unitShader;
+    Scene *scene;
     public: 
         BattleUI(int windowWidth, int windowHeight, std::vector<Player *> players = {}, std::vector<Enemy *> enemies = {});
         ~BattleUI();
@@ -35,6 +44,7 @@ class BattleUI : public UIScreen{
         bool isActive() const { return active; }
         void hideMenu() { active = false; }
 
+        bool endGame();
     private:
         // Button properties
 
@@ -44,16 +54,17 @@ class BattleUI : public UIScreen{
         float statsWidth, statsHeight, statsX, statsY, playerX, playerY, playerWidth, playerHeight;
         std::string statsText1, statsText2, statsText3, statsText4, statsText5;
         std::vector<Button> buttons;
+        glm::vec2 mouseCoordinates;
 
         // Helper methods
         void createButtons();
         void createMainButtons();
         void createAttackButtons();
+        void createTravelButtons();
 
 
         void renderText(Render &renderer, Shader &shader, TextRenderer &textRenderer, float buttonX, float buttonY, std::string buttonText, float scale);
         void renderMap(Render &renderer, Shader &shader);
         void renderStats(Render &renderer, Shader &shader, TextRenderer &textRenderer, float statsX, float statsY);
-        void renderPlayer(Render &renderer, Shader &shader, TextRenderer &textRenderer, float playerX, float playerY, float playerWidth, float playerHeight);
         bool isPointInButton(double x, double y);
 };

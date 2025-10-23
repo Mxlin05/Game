@@ -10,13 +10,14 @@
 #include "TextAlignment.h"
 #include <iostream>
 
+
 BattleUI::BattleUI(int windowWidth, int windowHeight, std::vector<Player *> players, std::vector<Enemy *> enemies)
-    : windowWidth(windowWidth), windowHeight(windowHeight), manager(players, enemies) {    
+    : windowHeight(windowHeight), manager(players, enemies) {    
 
     active = true;
     tileMaps["generic_battle_map"] = new TileMap("res/battle_tilemap.csv");
     tileMapShader = new Shader("res/shaders/basicTest.glsl");
-
+    unitShader = new Shader("res/shaders/basicTest.glsl");
 
     statsWidth = 150.0f;
     statsHeight = 125.0f;
@@ -36,10 +37,13 @@ BattleUI::BattleUI(int windowWidth, int windowHeight, std::vector<Player *> play
 }
 
 BattleUI::~BattleUI() {
+
+    std::cout << "Runs deconstructor" << std::endl;
     for (auto &[key, map] : tileMaps) {
         if (map) delete map;
     }
     if (tileMapShader) delete tileMapShader;
+
 }
 
 void BattleUI::render(Render &renderer, Shader &shader, TextRenderer &textRenderer) {
@@ -62,6 +66,9 @@ void BattleUI::createButtons(){
     buttons.clear();
 
     switch(currentState) {
+        case BattleState::TRAVEL:
+            createTravelButtons();
+            break;
         case BattleState::MAIN:
             createMainButtons();
             break;
@@ -78,19 +85,25 @@ void BattleUI::createMainButtons(){
 
     buttons.clear();
 
+    buttons.emplace_back(windowWidth / 2.0f - buttonWidth / 2.0f, startY + 120.0f, buttonWidth, buttonHeight, 0.5, "Travel");
     buttons.emplace_back(windowWidth / 2.0f - buttonWidth / 2.0f, startY + 60.0f, buttonWidth, buttonHeight, 0.5, "Attack");
     buttons.emplace_back(windowWidth / 2.0f - buttonWidth / 2.0f, startY, buttonWidth, buttonHeight, 0.5, "Defend");
     buttons.emplace_back(windowWidth / 2.0f - buttonWidth / 2.0f, startY - 60.0f, buttonWidth, buttonHeight, 0.5, "Run");
 
 
     // Assign callbacks
-    buttons[0].onClick = [this]() { 
+    buttons[0].onClick = [this]() {
+        std::cout << "Travel!\n";
+        currentState = BattleState::TRAVEL;
+        createButtons();
+    };
+    buttons[1].onClick = [this]() { 
         std::cout << "Attack!\n";
         currentState = BattleState::ATTACK;
         createButtons(); 
     };
-    buttons[1].onClick = []() { std::cout << "Defend!\n"; };
-    buttons[2].onClick = []() { std::cout << "Run Away!\n"; };
+    buttons[2].onClick = []() { std::cout << "Defend!\n"; };
+    buttons[3].onClick = []() { std::cout << "Run Away!\n"; };
 }
 
 void BattleUI::createAttackButtons(){
@@ -132,9 +145,11 @@ void BattleUI::createAttackButtons(){
         );
 
         //Temporary, need to be able to select enemies
-        buttons.back().onClick = [player, enemy, move]() mutable {
+        buttons.back().onClick = [this, player, enemy, move]() mutable {
             std::cout << "Using " << move.name << "!\n";
-            move.useMove(*player, *player);
+            manager.selectTarget(player);
+            manager.setPendingMove(move);
+
         };
     }
 
@@ -156,19 +171,40 @@ void BattleUI::createAttackButtons(){
     
 }
 
+void BattleUI::createTravelButtons(){
+    buttons.clear();
+    std::cout << "Creating travel buttons\n";
+    std::cout << "Travel mode activated - click anywhere to see coordinates\n";
+}
+
 void BattleUI::update(float deltaTime) {
-    // No updates needed for battle screen
+    if (manager.getCurrentState() == TurnState::EnemyTurn) {
+        manager.enemyAction(); 
+    }
 }
 
 void BattleUI::init() {
     createButtons();
+    
+    // Convert Player* to GameObject* for storage
+    std::vector<Player*> players = manager.getAllPlayers();
+    units["curr_players"] = std::vector<GameObject*>(players.begin(), players.end());
+    
+    std::cout << "curr_players size: " << units["curr_players"].size() << std::endl;
+    
+    // Convert Enemy* to GameObject* for storage
+    std::vector<Enemy*> enemies = manager.getAllEnemies();
+    units["gen_enemies"] = std::vector<GameObject*>(enemies.begin(), enemies.end());
+    std::cout << "gen_enemies size: " << units["gen_enemies"].size() << std::endl;
 
+    scene = new Scene(players, tileMaps["generic_battle_map"], enemies);
+    
+    
     manager.startBattle();
 }
 
 void BattleUI::renderMap(Render &renderer, Shader &shader) {
     // Set up projection matrix for full screen coverage
-    TileMap* map = tileMaps["generic_battle_map"];
     glm::mat4 projection = glm::ortho(0.0f, (float)windowWidth, 0.0f, (float)windowHeight);
     glm::mat4 view = glm::mat4(1.0f);
     glm::mat4 model = glm::mat4(1.0f);
@@ -205,7 +241,7 @@ void BattleUI::renderMap(Render &renderer, Shader &shader) {
     renderer.Draw(renderer.vao, renderer.ib, shader);
     
     // 3. Draw the tile map in the 70% area
-    if (map && tileMapShader) {
+    if (scene && tileMapShader && unitShader) {
         // std::cout << "render map" << std::endl;
         
         // Use full screen projection matrix and rely on startX/startY parameters
@@ -219,9 +255,11 @@ void BattleUI::renderMap(Render &renderer, Shader &shader) {
         // Draw the tile map in the 70% area
         // Start drawing from the bottom of the 70% area (overlayY)
         // std::cout << "Debug - Drawing tile map at startX: 0, startY: " << (int)overlayY << std::endl;
-        map->draw(renderer, *tileMapShader, windowWidth, (int)overlayHeight, 14, 0, (int)overlayY);
+        
+        scene->draw_battle(&renderer, tileMapShader, windowWidth, windowHeight, 32, 0.0f, overlayY);
     }
 }
+
 void BattleUI::renderStats(Render &renderer, Shader &shader, TextRenderer &textRenderer, float statsX, float statsY) {
     // Set up projection matrix for UI rendering
     glm::mat4 projection = glm::ortho(0.0f, (float)windowWidth, 0.0f, (float)windowHeight);
@@ -271,13 +309,35 @@ void BattleUI::renderText(Render &renderer, Shader &shader, TextRenderer &textRe
     textRenderer.RenderText(buttonText, X, Y, scale, glm::vec3(0.0f, 0.0f, 0.0f), projection);
 }
 
-void BattleUI::onKeyPress(int key) {
+void BattleUI::onKeyPress(int key) 
+{
     if (!active) return;
     
+    if(manager.getCurrentState() == TurnState::BattleOver){
+        endGame();
+    }
     // Check for Escape key to end battle
     if (key == GLFW_KEY_ESCAPE) {
         std::cout << "Escape pressed - ending battle" << std::endl;
+        for (auto &Enemy : units["gen_enemies"]) {
+            if (Enemy) Enemy->sprite->isSelected = false;
+            if (Enemy) Enemy->sprite->isHovered = false; 
+        }
         g_uiManager.setCurrScreen("StartMenu"); // Return to game
+        
+    }
+    if (manager.getCurrentState() == TurnState::SelectingTarget) {
+        manager.processInputs(key, manager.getPlayer());   
+        
+        if (manager.targetConfirmed) {
+            for (auto &Enemy : units["gen_enemies"]) {
+                if (Enemy) Enemy->sprite->isSelected = false;
+                if (Enemy) Enemy->sprite->isHovered = false; 
+            }
+            currentState = BattleState::MAIN;
+            createButtons();
+            manager.targetConfirmed = false;
+        }
     }
 }
 
@@ -286,16 +346,35 @@ void BattleUI::onMouseClick(double x, double y) {
     
     // Convert GLFW coordinates (top-left origin) to OpenGL coordinates (bottom-left origin)
     double openGLY = windowHeight - y;
+    
+    // Store mouse coordinates
+    mouseCoordinates = glm::vec2(x, openGLY);
+    
+    // Print coordinates when in travel state
+    if (currentState == BattleState::TRAVEL) {
+        std::cout << "Travel mode - Mouse click at coordinates: (" << x << ", " << openGLY << ")" << std::endl;
+    }
+    
     bool clickedOnButton = isPointInButton(x, openGLY);
 }
+
 
 bool BattleUI::isPointInButton(double x, double y) {
     for (auto &button : buttons) {
         if (button.isInside(x, y, false) && button.onClick){
             button.onClick();
-            manager.nextTurn();
             return true;
         }
     }
+    return true;
+}
+
+bool BattleUI::endGame() {
+    std::cout << "Battle ended - returning to main game" << std::endl;
+    for (auto &Enemy : units["gen_enemies"]) {
+        if (Enemy) Enemy->sprite->isSelected = false;
+        if (Enemy) Enemy->sprite->isHovered = false; 
+    }
+    g_uiManager.setCurrScreen("StartMenu"); // Return to main game screen
     return true;
 }

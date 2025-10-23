@@ -17,7 +17,7 @@ struct Move {
     std::string damageType;
     std::string effect;
 
-    std::function<void(Player&, GameObject&)> useMove;
+    std::function<void(GameObject&, GameObject&)> useMove;
 };
 
 
