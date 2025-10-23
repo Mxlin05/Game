@@ -186,12 +186,18 @@ int main()
     std::vector<Player *> players;
     players.push_back(&player1);
 
+    //do not have 2 copoies of same moves, just use same this is for test
     g_player = &player1; // Set global player pointer
     Enemy obj2("Enemy1", &sprite1, glm::vec2(150.0f, 300.0f), glm::vec2(100.0f, 100.0f), glm::vec2(0.0f),  glm::vec2(150.0f, 300.0f), glm::vec2(400.0f), 50.0f, 300.0f);
+    std::vector<Move> enemyMoves = loadMovesFromCSV("res/moves/PhysicalAttacks.csv");
+    obj2.moves = enemyMoves;
+    obj2.initMoves();
+    
     Npc npc1(&sprite1, glm::vec2(300.0f, 200.0f), glm::vec2(80.0f, 80.0f), glm::vec2(0.0f)); 
 
     std::vector<Enemy*> enemies;
     enemies.push_back(&obj2);
+
 
     TileMap tileMap("res/tilemap.csv");
     std::vector<int> walkGrid = tileMap.GenerateWalkabilityGrid();

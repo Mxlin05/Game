@@ -1,5 +1,6 @@
 #include "BattleManager.h"
 #include <iostream>
+#include <random>
 
 BattleManager::BattleManager(std::vector<Player*> players, std::vector<Enemy*> enemies) :
     players(players), enemies(enemies), currState(TurnState::StartBattle), currentEnemyIndex(0), currentPlayerIndex(0)
@@ -14,10 +15,12 @@ BattleManager::~BattleManager(){
 
 //use SPEED STAT
 void BattleManager::startBattle(){
-    currState = TurnState::PlayerTurn;
+    currState = TurnState::StartBattle;
 
     currentEnemyIndex = 0;
     currentPlayerIndex = 0;
+
+    nextTurn();
     
 }
 
@@ -25,6 +28,11 @@ void BattleManager::startBattle(){
 bool BattleManager::nextTurn(){
 
     checkBattleOver();
+
+    if(currState == TurnState::StartBattle){
+        currState = TurnState::PlayerTurn;
+        return true;
+    }
     if(currState == TurnState::BattleOver){
 
         std::cout << "Battle is over, no next turn" << std::endl;
@@ -47,12 +55,10 @@ bool BattleManager::nextTurn(){
         return true;
     }
 
+    //THIS SHOULD BE  SEPERATED INTO ENEMY ACTION AND PLAYER ACTION
     if(currState == TurnState::EnemyTurn){
 
         //THIS WILL BE CHANGED IN THE FURTURE BUT JKUST SKIP FOR NOW
-        currState = TurnState::PlayerTurn;
-        return true;
-
         std::cout << "Enemy turn, go to Player turn: " << std::endl;
         if(currentEnemyIndex < enemies.size() - 1){
             currentEnemyIndex = currentEnemyIndex + 1;
@@ -204,4 +210,31 @@ void BattleManager::confirmTargets(Player *player){
 
 TurnState BattleManager::getCurrentState(){
     return currState;
+}
+
+void BattleManager::playerAction(int key, Player *player){
+    //processInputs(key, *player);
+}
+
+void BattleManager::enemyAction(){
+
+    std::cout << "In enemy action" << std::endl;
+    std::random_device rd;
+    std::mt19937 gen(rd());
+
+    std::uniform_int_distribution<> distrib(1, enemies[currentEnemyIndex] -> moves.size() - 1);
+    int moveIndex = distrib(gen);
+
+    std::uniform_int_distribution<> targetDistrib(0, players.size() - 1);
+    int targetIndex = targetDistrib(gen);
+
+    Enemy *enemy = enemies[currentEnemyIndex];
+    Move enemyMove = enemies[currentEnemyIndex] -> moves[moveIndex];
+    Player* targetPlayer = players[targetIndex];
+
+    std::cout << "Enemy " << enemies[currentEnemyIndex]->name << " uses " << enemyMove.name 
+              << " on Player " << targetPlayer->name << std::endl;
+    enemyMove.useMove(*enemy, static_cast<GameObject&>(*targetPlayer));
+
+    nextTurn();
 }

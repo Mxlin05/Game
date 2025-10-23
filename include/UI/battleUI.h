@@ -17,7 +17,8 @@ enum class BattleState {
     TRAVEL, 
     ATTACK,
     MAGIC,
-    ITEM
+    ITEM, 
+    ENEMYTURN,
 };
 
 #include "TileMap.h"

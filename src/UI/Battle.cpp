@@ -10,6 +10,7 @@
 #include "TextAlignment.h"
 #include <iostream>
 
+
 BattleUI::BattleUI(int windowWidth, int windowHeight, std::vector<Player *> players, std::vector<Enemy *> enemies)
     : windowHeight(windowHeight), manager(players, enemies) {    
 
@@ -177,7 +178,9 @@ void BattleUI::createTravelButtons(){
 }
 
 void BattleUI::update(float deltaTime) {
-    // No updates needed for battle screen
+    if (manager.getCurrentState() == TurnState::EnemyTurn) {
+        manager.enemyAction(); 
+    }
 }
 
 void BattleUI::init() {
@@ -360,10 +363,6 @@ bool BattleUI::isPointInButton(double x, double y) {
     for (auto &button : buttons) {
         if (button.isInside(x, y, false) && button.onClick){
             button.onClick();
-            if(!manager.nextTurn()){
-                return endGame();
-            }
-
             return true;
         }
     }

@@ -27,7 +27,7 @@ class BattleManager {
 
         void startBattle();
         bool nextTurn();
-        void playerAction();
+        void playerAction(int key, Player *player);
         void enemyAction();
         void selectTarget(Player *player);
 

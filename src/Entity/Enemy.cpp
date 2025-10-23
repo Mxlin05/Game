@@ -1,8 +1,8 @@
 #include "Enemy.h"
 
 
-Enemy::Enemy(std::string name, Sprite *sprite, glm::vec2 position, glm::vec2 size, glm::vec2 rotation, glm::vec2 patrolStart, glm::vec2 patrolEnd, float speed, float detectionRange) 
-    : GameObject(sprite, position, size, rotation), name(name), patrolStart(patrolStart), patrolEnd(patrolEnd), speed(speed), dectectionRange(detectionRange) {
+Enemy::Enemy(std::string name, Sprite *sprite, glm::vec2 position, glm::vec2 size, glm::vec2 rotation, glm::vec2 patrolStart, glm::vec2 patrolEnd, float speed, float detectionRange, std::vector<Move> moves) 
+    : GameObject(sprite, position, size, rotation), name(name), moves(moves), patrolStart(patrolStart), patrolEnd(patrolEnd), speed(speed), dectectionRange(detectionRange) {
     state = AIState::Idle;
     registerObjectType("enemy");
     updateHealth(100);
@@ -21,6 +21,10 @@ void Enemy::updateAABB(){
     if (aabbID >= 0){
         Physics::updateAABB(aabbID, position, size);
     }
+}
+
+void Enemy::initMoves(){
+    initializeMoveCallbacks(moves);
 }
 
 void Enemy::update(float deltaTime, const glm::vec2 &playerPos) {
